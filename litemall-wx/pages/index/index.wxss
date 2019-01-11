@@ -65,6 +65,10 @@
   line-height: 36rpx;
 }
 
+.a-section .h .img{
+  height: 128rpx;
+}
+
 .a-brand .b {
   width: 750rpx;
   height: auto;
@@ -278,6 +282,12 @@
   margin-left: 30rpx;
   font-size: 28rpx;
   color: #a78845;
+}
+
+.a-groupon .b .sales {
+  font-size: 24rpx;
+  color: #999999;
+  line-height: 40rpx;
 }
 
 .a-new .b {
@@ -513,4 +523,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.time-tag {
+  margin-left: -15rpx;
+  margin-top: 5rpx;
+  margin-bottom: 5rpx;
+}
+
+.goods_cart_right {
+  display: flex;
+  float: right;
+  padding-left: 10rpx;
+  padding-right: 20rpx;
+  width: 80rpx;
+  height: 244rpx;
 }

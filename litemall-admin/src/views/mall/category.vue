@@ -76,14 +76,32 @@
             <el-option v-for="item in catL1" :key="item.value" :label="item.label" :value="item.value"/>
           </el-select>
         </el-form-item>
+        <el-form-item v-if="dataForm.level === 'L1'" label="是否首页显示" prop="homeShow">
+          <el-radio-group v-model="dataForm.homeShow">
+            <el-radio :label="true">是</el-radio>
+            <el-radio :label="false">否</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item label="类目图标" prop="iconUrl">
-          <el-upload :headers="headers" :action="uploadPath" :show-file-list="false" :on-success="uploadIconUrl" class="avatar-uploader" list-type="picture-card" accept=".jpg,.jpeg,.png,.gif">
+          <el-upload
+            :headers="headers"
+            :action="uploadPath"
+            :show-file-list="false"
+            :on-success="uploadIconUrl"
+            class="avatar-uploader"
+            accept=".jpg,.jpeg,.png,.gif">
             <img v-if="dataForm.iconUrl" :src="dataForm.iconUrl" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"/>
           </el-upload>
         </el-form-item>
         <el-form-item label="类目图片" prop="picUrl">
-          <el-upload :headers="headers" :action="uploadPath" :show-file-list="false" :on-success="uploadPicUrl" class="avatar-uploader" list-type="picture-card" accept=".jpg,.jpeg,.png,.gif">
+          <el-upload
+            :headers="headers"
+            :action="uploadPath"
+            :show-file-list="false"
+            :on-success="uploadPicUrl"
+            class="avatar-uploader"
+            accept=".jpg,.jpeg,.png,.gif">
             <img v-if="dataForm.picUrl" :src="dataForm.picUrl" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"/>
           </el-upload>
@@ -122,8 +140,8 @@
   text-align: center;
 }
 .avatar {
-  width: 120px;
-  height: 120px;
+  width: 145px;
+  height: 145px;
   display: block;
 }
 </style>
@@ -160,7 +178,8 @@ export default {
         pid: undefined,
         desc: '',
         iconUrl: undefined,
-        picUrl: undefined
+        picUrl: undefined,
+        homeShow: false
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -218,7 +237,8 @@ export default {
         pid: undefined,
         desc: '',
         iconUrl: undefined,
-        picUrl: undefined
+        picUrl: undefined,
+        homeShow: false
       }
     },
     filterLevel: function(value, row) {

@@ -16,7 +16,7 @@
           </el-input>
         </el-form-item>
         <el-form-item label="当前价格" prop="retailPrice">
-          <el-input v-model="goods.retailPrice" placeholder="0.00">
+          <el-input v-model="goods.retailPrice" placeholder="0.00" @change="handleGoodsRetailPrice">
             <template slot="append">元</template>
           </el-input>
         </el-form-item>
@@ -40,14 +40,30 @@
         </el-form-item>
 
         <el-form-item label="商品图片">
-          <el-upload :headers="headers" :action="uploadPath" :show-file-list="false" :on-success="uploadPicUrl" class="avatar-uploader" list-type="picture-card" accept=".jpg,.jpeg,.png,.gif">
+          <el-upload
+            :headers="headers"
+            :action="uploadPath"
+            :show-file-list="false"
+            :on-success="uploadPicUrl"
+            class="avatar-uploader"
+            accept=".jpg,.jpeg,.png,.gif">
             <img v-if="goods.picUrl" :src="goods.picUrl" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"/>
           </el-upload>
         </el-form-item>
 
         <el-form-item label="宣传画廊">
-          <el-upload :action="uploadPath" :headers="headers" :limit="5" :file-list="galleryFileList" :on-exceed="uploadOverrun" :on-success="handleGalleryUrl" :on-remove="handleRemove" multiple accept=".jpg,.jpeg,.png,.gif" list-type="picture-card">
+          <el-upload
+            :action="uploadPath"
+            :headers="headers"
+            :limit="5"
+            :file-list="galleryFileList"
+            :on-exceed="uploadOverrun"
+            :on-success="handleGalleryUrl"
+            :on-remove="handleRemove"
+            multiple
+            accept=".jpg,.jpeg,.png,.gif"
+            list-type="picture-card">
             <i class="el-icon-plus"/>
           </el-upload>
         </el-form-item>
@@ -85,8 +101,8 @@
     </el-card>
 
     <el-card class="box-card">
-      <h3>商品规格</h3>
-      <el-button :plain="true" type="primary" @click="handleSpecificationShow">添加</el-button>
+      <h3>商品规格（暂不支持多规格）</h3>
+      <el-button :plain="true" type="primary" disabled @click="handleSpecificationShow">添加</el-button>
 
       <el-table :data="specifications">
         <el-table-column property="specification" label="规格名" />
@@ -104,7 +120,7 @@
         </el-table-column>
         <el-table-column align="center" label="操作" width="250" class-name="small-padding fixed-width">
           <template slot-scope="scope">
-            <el-button type="danger" size="mini" @click="handleSpecificationDelete(scope.row)">删除</el-button>
+            <el-button type="danger" size="mini" disabled @click="handleSpecificationDelete(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -118,7 +134,13 @@
             <el-input v-model="specForm.value"/>
           </el-form-item>
           <el-form-item label="规格图片" prop="picUrl">
-            <el-upload :headers="headers" :action="uploadPath" :show-file-list="false" :on-success="uploadSpecPicUrl" class="avatar-uploader" list-type="picture-card" accept=".jpg,.jpeg,.png,.gif">
+            <el-upload
+              :headers="headers"
+              :action="uploadPath"
+              :show-file-list="false"
+              :on-success="uploadSpecPicUrl"
+              class="avatar-uploader"
+              accept=".jpg,.jpeg,.png,.gif">
               <img v-if="specForm.picUrl" :src="specForm.picUrl" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"/>
             </el-upload>
@@ -169,7 +191,13 @@
             <el-input v-model="productForm.number"/>
           </el-form-item>
           <el-form-item label="货品图片" prop="url">
-            <el-upload :headers="headers" :action="uploadPath" :show-file-list="false" :on-success="uploadProductUrl" class="avatar-uploader" list-type="picture-card" accept=".jpg,.jpeg,.png,.gif">
+            <el-upload
+              :headers="headers"
+              :action="uploadPath"
+              :show-file-list="false"
+              :on-success="uploadProductUrl"
+              class="avatar-uploader"
+              accept=".jpg,.jpeg,.png,.gif">
               <img v-if="productForm.url" :src="productForm.url" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"/>
             </el-upload>
@@ -250,8 +278,8 @@
   text-align: center;
 }
 .avatar {
-  width: 120px;
-  height: 120px;
+  width: 145px;
+  height: 145px;
   display: block;
 }
 </style>
@@ -354,6 +382,10 @@ export default {
             url: this.goods.gallery[i]
           })
         }
+        const keywords = response.data.data.goods.keywords
+        if (keywords !== null) {
+          this.keywords = keywords.split(',')
+        }
       })
 
       listCatAndBrand().then(response => {
@@ -378,7 +410,7 @@ export default {
         .then(response => {
           this.$notify.success({
             title: '成功',
-            message: '创建成功'
+            message: '更新商品成功'
           })
           this.$router.push({ path: '/goods/list' })
         })
@@ -578,6 +610,9 @@ export default {
     handleAttributeDelete(row) {
       const index = this.attributes.indexOf(row)
       this.attributes.splice(index, 1)
+    },
+    handleGoodsRetailPrice() {
+      this.products[0].price = this.goods.retailPrice
     }
   }
 }

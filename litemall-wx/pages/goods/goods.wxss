@@ -59,7 +59,7 @@
 
 .goods-info {
   width: 750rpx;
-  height: 306rpx;
+  /* height: 306rpx; */
   overflow: hidden;
   background: #fff;
 }
@@ -947,3 +947,16 @@
   width: 100%;
   height: 6rpx;
 }
+
+.goods-info .c .flash-sales .time-tag {
+ margin-left:-20rpx;
+  margin-bottom:25rpx;
+}
+
+.goods-info .c .flash-sales .sales {
+  font-size:28rpx;
+  color:#999999;
+  line-height:40rpx;
+
+}
+

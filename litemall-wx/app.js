@@ -24,8 +24,18 @@ App({
     }).catch(() => {
       this.globalData.hasLogin = false;
     });
+
+    if (wx.getStorageSync('defaultPeriodText')) {
+      this.globalData.defaultPeriodText = wx.getStorageSync('defaultPeriodText');
+    }
+    if (wx.getStorageSync('localAddressText')) {
+      this.globalData.defaultCounty = wx.getStorageSync('localAddressText');
+    }
+
   },
   globalData: {
-    hasLogin: false
+    hasLogin: false,
+    defaultPeriodText: '今日达',
+    defaultCounty: '济南市'
   }
 })

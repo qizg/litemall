@@ -6,11 +6,12 @@
 		"postcss": true,
 		"minified": true,
 		"newFeature": true,
+		"autoAudits": false,
 		"uglifyFileName": true
 	},
 	"compileType": "miniprogram",
-	"libVersion": "2.4.0",
-	"appid": "wxa5b486c6b918ecfb",
+	"libVersion": "2.4.3",
+	"appid": "wx27f7fad4a00175ef",
 	"projectname": "litemall-wx",
 	"condition": {
 		"search": {

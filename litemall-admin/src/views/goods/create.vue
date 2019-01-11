@@ -16,7 +16,7 @@
           </el-input>
         </el-form-item>
         <el-form-item label="当前价格" prop="retailPrice">
-          <el-input v-model="goods.retailPrice" placeholder="0.00">
+          <el-input v-model="goods.retailPrice" placeholder="0.00" @change="handleGoodsRetailPrice">
             <template slot="append">元</template>
           </el-input>
         </el-form-item>
@@ -46,7 +46,6 @@
             :headers="headers"
             :on-success="uploadPicUrl"
             class="avatar-uploader"
-            list-type="picture-card"
             accept=".jpg,.jpeg,.png,.gif">
             <img v-if="goods.picUrl" :src="goods.picUrl" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"/>
@@ -108,12 +107,12 @@
     </el-card>
 
     <el-card class="box-card">
-      <h3>商品规格</h3>
+      <h3>商品规格（暂不支持多规格）</h3>
       <el-row :gutter="20" type="flex" align="middle" style="padding:20px 0;">
         <el-col :span="10">
           <el-radio-group v-model="multipleSpec" @change="specChanged">
             <el-radio-button :label="false">默认标准规格</el-radio-button>
-            <el-radio-button :label="true">多规格支持</el-radio-button>
+            <el-radio-button :label="true" disabled>多规格支持</el-radio-button>
           </el-radio-group>
         </el-col>
         <el-col v-if="multipleSpec" :span="10">
@@ -169,7 +168,6 @@
               :headers="headers"
               :on-success="uploadSpecPicUrl"
               class="avatar-uploader"
-              list-type="picture-card"
               accept=".jpg,.jpeg,.png,.gif">
               <img v-if="specForm.picUrl" :src="specForm.picUrl" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"/>
@@ -221,7 +219,7 @@
             </el-tag>
           </el-form-item>
           <el-form-item label="货品售价" prop="price">
-            <el-input v-model="productForm.price"/>
+            <el-input v-model="productForm.price" disabled/>
           </el-form-item>
           <el-form-item label="货品数量" prop="number">
             <el-input v-model="productForm.number"/>
@@ -233,7 +231,6 @@
               :headers="headers"
               :on-success="uploadProductUrl"
               class="avatar-uploader"
-              list-type="picture-card"
               accept=".jpg,.jpeg,.png,.gif">
               <img v-if="productForm.url" :src="productForm.url" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"/>
@@ -306,6 +303,8 @@
   }
 
   .avatar-uploader .el-upload {
+    width: 145px;
+    height: 145px;
     border: 1px dashed #d9d9d9;
     border-radius: 6px;
     cursor: pointer;
@@ -327,8 +326,8 @@
   }
 
   .avatar {
-    width: 120px;
-    height: 120px;
+    width: 145px;
+    height: 145px;
     display: block;
   }
 </style>
@@ -607,6 +606,9 @@ export default {
     handleAttributeDelete(row) {
       const index = this.attributes.indexOf(row)
       this.attributes.splice(index, 1)
+    },
+    handleGoodsRetailPrice() {
+      this.products[0].price = this.goods.retailPrice
     }
   }
 }

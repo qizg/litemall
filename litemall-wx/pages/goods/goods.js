@@ -30,7 +30,9 @@ Page({
     collectImage: '/static/images/icon_collect.png',
     shareImage: '',
     isGroupon: false, //标识是否是一个参团购买
-    soldout: false
+    soldout: false,
+    flashSales: {},
+    timer: {}
   },
 
   // 页面分享
@@ -145,7 +147,8 @@ Page({
           userHasCollect: res.data.userHasCollect,
           shareImage: res.data.shareImage,
           checkedSpecPrice: res.data.info.retailPrice,
-          groupon: res.data.groupon
+          groupon: res.data.groupon,
+          flashSales: res.data.flashSalesRule
         });
 
         //如果是通过分享的团购参加团购，则团购项目应该与分享的一致并且不可更改
@@ -162,6 +165,16 @@ Page({
             groupon: groupons
           });
 
+        }
+
+        if (that.data.timer) {
+          clearInterval(that.data.timer);
+        }
+
+        if (res.data.flashSalesRule) {
+          that.data.flashSales.dat = (res.data.flashSalesRule.expireTimeMilliseconds - new Date().getTime()) / 1000;
+          that.countdownTime();
+          that.data.timer = setInterval(that.countdownTime, 1000);
         }
 
         if (res.data.userHasCollect == 1) {
@@ -652,5 +665,41 @@ Page({
   setSpecValueStatus: function() {
 
   },
+
+  countdownTime: function () {//时间函数
+    let that = this;
+
+    // console.log(intDiff)
+    let day = 0, hour = 0, minute = 0, second = 0;
+    let intDiff = that.data.flashSales.dat;//获取数据中的时间戳
+    if (intDiff > 0) {//转换时间
+      day = Math.floor(intDiff / (60 * 60 * 24));
+      hour = Math.floor(intDiff / (60 * 60)) - (day * 24);
+      minute = Math.floor(intDiff / 60) - (day * 24 * 60) - (hour * 60);
+      second = Math.floor(intDiff) - (day * 24 * 60 * 60) - (hour * 60 * 60) - (minute * 60);
+      if (hour <= 9) hour = '0' + hour;
+      if (minute <= 9) minute = '0' + minute;
+      if (second <= 9) second = '0' + second;
+      that.data.flashSales.dat--;
+      var str;
+      if (day > 0) {
+        str = day + "天" + hour + ':' + minute + ':' + second
+      } else {
+        str = hour + ':' + minute + ':' + second
+      }
+      // console.log(str)
+    } else {
+      var str = "已结束！";
+
+      clearInterval(that.timer);
+    }
+    // console.log(str);
+    that.data.flashSales.difftime = str;//在数据中添加difftime参数名，把时间放进去
+
+    that.setData({
+      flashSales: that.data.flashSales
+    })
+    // console.log(that)
+  }
 
 })
