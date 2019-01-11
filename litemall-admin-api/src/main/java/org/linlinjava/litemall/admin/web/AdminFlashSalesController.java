@@ -2,7 +2,8 @@ package org.linlinjava.litemall.admin.web;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.linlinjava.litemall.admin.annotation.LoginAdmin;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.linlinjava.litemall.admin.annotation.RequiresPermissionsDesc;
 import org.linlinjava.litemall.core.util.ResponseUtil;
 import org.linlinjava.litemall.core.validator.Order;
 import org.linlinjava.litemall.core.validator.Sort;
@@ -36,17 +37,14 @@ public class AdminFlashSalesController {
     @Autowired
     private LitemallFlashSalesService flashSalesService;
 
+    @RequiresPermissions("admin:flashsales:read")
+    @RequiresPermissionsDesc(menu={"推广管理" , "抢购管理"}, button="查询")
     @GetMapping("/listRecord")
-    public Object listRecord(@LoginAdmin Integer adminId,
-                             String flashSalesId,
+    public Object listRecord(String flashSalesId,
                              @RequestParam(defaultValue = "1") Integer page,
                              @RequestParam(defaultValue = "10") Integer limit,
                              @Sort @RequestParam(defaultValue = "add_time") String sort,
                              @Order @RequestParam(defaultValue = "desc") String order) {
-        if (adminId == null) {
-            return ResponseUtil.unlogin();
-        }
-
         List<LitemallFlashSales> flashSalesList = flashSalesService.querySelective(flashSalesId, page, limit, sort, order);
         int total = flashSalesService.countSelective(flashSalesId, page, limit, sort, order);
 
@@ -74,17 +72,14 @@ public class AdminFlashSalesController {
         return ResponseUtil.ok(data);
     }
 
+    @RequiresPermissions("admin:flashsales:list")
+    @RequiresPermissionsDesc(menu={"推广管理" , "抢购管理"}, button="查询")
     @GetMapping("/list")
-    public Object list(@LoginAdmin Integer adminId,
-                       String goodsId,
+    public Object list(String goodsId,
                        @RequestParam(defaultValue = "1") Integer page,
                        @RequestParam(defaultValue = "10") Integer limit,
                        @Sort @RequestParam(defaultValue = "add_time") String sort,
                        @Order @RequestParam(defaultValue = "desc") String order) {
-        if (adminId == null) {
-            return ResponseUtil.unlogin();
-        }
-
         List<LitemallFlashSalesRules> rulesList = rulesService.querySelective(goodsId, page, limit, sort, order);
         int total = rulesService.countSelective(goodsId, page, limit, sort, order);
         Map<String, Object> data = new HashMap<>();
@@ -115,12 +110,10 @@ public class AdminFlashSalesController {
         return null;
     }
 
+    @RequiresPermissions("admin:flashsales:update")
+    @RequiresPermissionsDesc(menu={"推广管理" , "抢购管理"}, button="编辑")
     @PostMapping("/update")
-    public Object update(@LoginAdmin Integer adminId, @RequestBody LitemallFlashSalesRules flashSalesRules) {
-        if (adminId == null) {
-            return ResponseUtil.unlogin();
-        }
-
+    public Object update(@RequestBody LitemallFlashSalesRules flashSalesRules) {
         Object error = validate(flashSalesRules);
         if (error != null) {
             return error;
@@ -143,12 +136,10 @@ public class AdminFlashSalesController {
     }
 
 
+    @RequiresPermissions("admin:flashsales:create")
+    @RequiresPermissionsDesc(menu={"推广管理" , "抢购管理"}, button="添加")
     @PostMapping("/create")
-    public Object create(@LoginAdmin Integer adminId, @RequestBody LitemallFlashSalesRules flashSalesRules) {
-        if (adminId == null) {
-            return ResponseUtil.unlogin();
-        }
-
+    public Object create(@RequestBody LitemallFlashSalesRules flashSalesRules) {
         Object error = validate(flashSalesRules);
         if (error != null) {
             return error;
@@ -169,12 +160,10 @@ public class AdminFlashSalesController {
     }
 
 
+    @RequiresPermissions("admin:flashsales:delete")
+    @RequiresPermissionsDesc(menu={"推广管理" , "抢购管理"}, button="删除")
     @PostMapping("/delete")
-    public Object delete(@LoginAdmin Integer adminId, @RequestBody LitemallFlashSalesRules flashSalesRules) {
-        if (adminId == null) {
-            return ResponseUtil.unlogin();
-        }
-
+    public Object delete(@RequestBody LitemallFlashSalesRules flashSalesRules) {
         Integer id = flashSalesRules.getId();
         if (id == null) {
             return ResponseUtil.badArgument();
