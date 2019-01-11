@@ -77,6 +77,37 @@
     </view>
   </view>
 
+  <view class="a-section a-groupon" wx:if="{{flashSales.length > 0}}">
+    <view class="h" >
+      <view class="title">
+        <image class="img" src="/static/images/bg_flash_sale_top.png" mode="aspectFit"></image>
+      </view>
+    </view>
+    <view class="b">
+      <view class="item" wx:for="{{flashSales}}" wx:for-index="index" wx:for-item="item" wx:key="id">
+        <navigator url="/pages/goods/goods?id={{item.goods.id}}">
+          <image class="img" src="{{item.goods.picUrl}}" background-size="cover"></image>
+          <view class="right" style="width: 396rpx;">
+            <view class="text">
+              <text class="name">{{item.goods.name}}</text>
+              <view class="time-tag">
+                <zan-capsule color="#a78845" leftText="距结束" rightText="{{item.difftime}}" />
+              </view>
+              <text class="sales">已售{{item.flash_sales_sold_number}}件 / 还剩{{item.flash_sales_member}}件</text>
+              <view class="price">
+                <view class="counterPrice">原价：￥{{item.goods.counterPrice}}</view>
+                <view class="retailPrice">现价：￥{{item.flash_sales_price}}</view>
+              </view>
+            </view>
+          </view>
+        </navigator>
+        <image class="goods_cart_right" src="/static/images/ic_menu_shoping_nor.png"
+               data-goods="{{item}}"
+               mode="aspectFit" background-size="cover" bindtap="addToCart"></image>
+      </view>
+    </view>
+  </view>
+
   <view class="a-section a-brand">
     <view class="h">
       <navigator url="../brand/brand">

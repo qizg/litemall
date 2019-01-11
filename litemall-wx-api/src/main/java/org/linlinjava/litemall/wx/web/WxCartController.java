@@ -47,6 +47,8 @@ public class WxCartController {
     private LitemallCouponUserService couponUserService;
     @Autowired
     private CouponVerifyService couponVerifyService;
+    @Autowired
+    private LitemallFlashSalesRulesService flashSalesRulesService;
 
     /**
      * 用户购物车信息
@@ -66,6 +68,11 @@ public class WxCartController {
         Integer checkedGoodsCount = 0;
         BigDecimal checkedGoodsAmount = new BigDecimal(0.00);
         for (LitemallCart cart : cartList) {
+            LitemallFlashSalesRulesResponse flashSalesRule = flashSalesRulesService.queryFirstByGoodsId(cart.getGoodsId());
+            if (flashSalesRule != null) {
+                cart.setPrice(cart.getPrice().subtract(flashSalesRule.getDiscount()));
+            }
+
             goodsCount += cart.getNumber();
             goodsAmount = goodsAmount.add(cart.getPrice().multiply(new BigDecimal(cart.getNumber())));
             if (cart.getChecked()) {
@@ -119,11 +126,22 @@ public class WxCartController {
         }
 
         LitemallGoodsProduct product = productService.findById(productId);
+
+        int stock = 0;
+        if (product != null) {
+            stock = product.getNumber();
+        }
+        // 判断商品为抢购商品时获取剩余库存
+        LitemallFlashSalesRulesResponse flashSalesRules = flashSalesRulesService.queryFirstByGoodsId(goods.getId());
+        if (flashSalesRules != null) {
+            stock = flashSalesRules.getLastNumber();
+        }
+
         //判断购物车中是否存在此规格商品
         LitemallCart existCart = cartService.queryExist(goodsId, productId, userId);
         if (existCart == null) {
             //取得规格的信息,判断规格库存
-            if (product == null || number > product.getNumber()) {
+            if (product == null || number > stock) {
                 return ResponseUtil.fail(GOODS_NO_STOCK, "库存不足");
             }
 
@@ -139,7 +157,7 @@ public class WxCartController {
         } else {
             //取得规格的信息,判断规格库存
             int num = existCart.getNumber() + number;
-            if (num > product.getNumber()) {
+            if (num > stock) {
                 return ResponseUtil.fail(GOODS_NO_STOCK, "库存不足");
             }
             existCart.setNumber((short) num);
@@ -425,6 +443,13 @@ public class WxCartController {
         }
         BigDecimal checkedGoodsPrice = new BigDecimal(0.00);
         for (LitemallCart cart : checkedGoodsList) {
+
+            // 若为抢购商品，扣减抢购价格
+            LitemallFlashSalesRulesResponse flashSalesRule = flashSalesRulesService.queryFirstByGoodsId(cart.getGoodsId());
+            if (flashSalesRule != null) {
+                cart.setPrice(cart.getPrice().subtract(flashSalesRule.getDiscount()));
+            }
+
             //  只有当团购规格商品ID符合才进行团购优惠
             if (grouponRules != null && grouponRules.getGoodsId().equals(cart.getGoodsId())) {
                 checkedGoodsPrice = checkedGoodsPrice.add(cart.getPrice().subtract(grouponPrice).multiply(new BigDecimal(cart.getNumber())));
@@ -438,14 +463,14 @@ public class WxCartController {
         Integer tmpCouponId = 0;
         int tmpCouponLength = 0;
         List<LitemallCouponUser> couponUserList = couponUserService.queryAll(userId);
-        for(LitemallCouponUser couponUser : couponUserList){
+        for (LitemallCouponUser couponUser : couponUserList) {
             LitemallCoupon coupon = couponVerifyService.checkCoupon(userId, couponUser.getCouponId(), checkedGoodsPrice);
-            if(coupon == null){
+            if (coupon == null) {
                 continue;
             }
 
             tmpCouponLength++;
-            if(tmpCouponPrice.compareTo(coupon.getDiscount()) == -1){
+            if (tmpCouponPrice.compareTo(coupon.getDiscount()) == -1) {
                 tmpCouponPrice = coupon.getDiscount();
                 tmpCouponId = coupon.getId();
             }
@@ -457,17 +482,15 @@ public class WxCartController {
         // 1. 用户不想使用优惠券，则不处理
         // 2. 用户想自动使用优惠券，则选择合适优惠券
         // 3. 用户已选择优惠券，则测试优惠券是否合适
-        if (couponId == null || couponId.equals(-1)){
+        if (couponId == null || couponId.equals(-1)) {
             couponId = -1;
-        }
-        else if (couponId.equals(0)) {
+        } else if (couponId.equals(0)) {
             couponPrice = tmpCouponPrice;
             couponId = tmpCouponId;
-        }
-        else {
+        } else {
             LitemallCoupon coupon = couponVerifyService.checkCoupon(userId, couponId, checkedGoodsPrice);
             // 用户选择的优惠券有问题
-            if(coupon == null){
+            if (coupon == null) {
                 return ResponseUtil.badArgumentValue();
             }
             couponPrice = coupon.getDiscount();

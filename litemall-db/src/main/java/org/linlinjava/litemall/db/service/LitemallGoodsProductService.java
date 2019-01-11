@@ -1,6 +1,5 @@
 package org.linlinjava.litemall.db.service;
 
-import org.apache.ibatis.annotations.Param;
 import org.linlinjava.litemall.db.dao.GoodsProductMapper;
 import org.linlinjava.litemall.db.dao.LitemallGoodsProductMapper;
 import org.linlinjava.litemall.db.domain.LitemallGoodsProduct;
@@ -38,6 +37,11 @@ public class LitemallGoodsProductService {
         litemallGoodsProductMapper.insertSelective(goodsProduct);
     }
 
+    public void update(LitemallGoodsProduct goodsProduct) {
+        goodsProduct.setUpdateTime(LocalDateTime.now());
+        litemallGoodsProductMapper.updateByPrimaryKeySelective(goodsProduct);
+    }
+
     public int count() {
         LitemallGoodsProductExample example = new LitemallGoodsProductExample();
         example.or().andDeletedEqualTo(false);
@@ -56,5 +60,11 @@ public class LitemallGoodsProductService {
 
     public int reduceStock(Integer id, Short num){
         return goodsProductMapper.reduceStock(id, num);
+    }
+
+    public LitemallGoodsProduct findOneByGoodsId(Integer gid) {
+        LitemallGoodsProductExample example = new LitemallGoodsProductExample();
+        example.or().andGoodsIdEqualTo(gid);
+        return litemallGoodsProductMapper.selectOneByExample(example);
     }
 }

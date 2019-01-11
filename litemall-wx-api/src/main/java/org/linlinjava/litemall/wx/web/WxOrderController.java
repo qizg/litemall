@@ -113,6 +113,10 @@ public class WxOrderController {
     private LitemallCouponUserService couponUserService;
     @Autowired
     private CouponVerifyService couponVerifyService;
+    @Autowired
+    private LitemallFlashSalesService flashSalesService;
+    @Autowired
+    private LitemallFlashSalesRulesService flashSalesRulesService;
 
     private String detailedAddress(LitemallAddress litemallAddress) {
         Integer provinceId = litemallAddress.getProvinceId();
@@ -313,8 +317,16 @@ public class WxOrderController {
         if (checkedGoodsList.size() == 0) {
             return ResponseUtil.badArgumentValue();
         }
+        List<Integer> flashSalesRuleIds = new ArrayList<>();
         BigDecimal checkedGoodsPrice = new BigDecimal(0.00);
         for (LitemallCart checkGoods : checkedGoodsList) {
+            // 若为抢购商品，扣减抢购价格
+            LitemallFlashSalesRulesResponse flashSalesRule = flashSalesRulesService.queryFirstByGoodsId(checkGoods.getGoodsId());
+            if (flashSalesRule != null) {
+                flashSalesRuleIds.add(flashSalesRule.getId());
+                checkGoods.setPrice(checkGoods.getPrice().subtract(flashSalesRule.getDiscount()));
+            }
+
             //  只有当团购规格商品ID符合才进行团购优惠
             if (grouponRules != null && grouponRules.getGoodsId().equals(checkGoods.getGoodsId())) {
                 checkedGoodsPrice = checkedGoodsPrice.add(checkGoods.getPrice().subtract(grouponPrice).multiply(new BigDecimal(checkGoods.getNumber())));
@@ -327,9 +339,9 @@ public class WxOrderController {
         // 使用优惠券减免的金额
         BigDecimal couponPrice = new BigDecimal(0.00);
         // 如果couponId=0则没有优惠券，couponId=-1则不使用优惠券
-        if(couponId != 0 && couponId != -1){
+        if (couponId != 0 && couponId != -1) {
             LitemallCoupon coupon = couponVerifyService.checkCoupon(userId, couponId, checkedGoodsPrice);
-            if(coupon == null){
+            if (coupon == null) {
                 return ResponseUtil.badArgumentValue();
             }
             couponPrice = coupon.getDiscount();
@@ -421,7 +433,7 @@ public class WxOrderController {
             }
 
             // 如果使用了优惠券，设置优惠券使用状态
-            if(couponId != 0 && couponId != -1){
+            if (couponId != 0 && couponId != -1) {
                 LitemallCouponUser couponUser = couponUserService.queryOne(userId, couponId);
                 couponUser.setStatus(CouponUserConstant.STATUS_USED);
                 couponUser.setUsedTime(LocalDateTime.now());
@@ -450,6 +462,18 @@ public class WxOrderController {
                 }
 
                 grouponService.createGroupon(groupon);
+            }
+
+            // 如果有符合抢购规则的商品，添加抢购信息
+            if (flashSalesRuleIds.size() > 0) {
+                for (Integer id : flashSalesRuleIds) {
+                    LitemallFlashSales flashSales = new LitemallFlashSales();
+                    flashSales.setOrderId(orderId);
+                    flashSales.setPayed(false);
+                    flashSales.setUserId(userId);
+                    flashSales.setRulesId(id);
+                    flashSalesService.createFlashSales(flashSales);
+                }
             }
         } catch (Exception ex) {
             txManager.rollback(status);
@@ -617,9 +641,9 @@ public class WxOrderController {
      * 2. 设置订单付款成功状态相关信息;
      * 3. 响应微信商户平台.
      * <p>
-     *  注意，这里pay-notify是示例地址，建议开发者应该设立一个隐蔽的回调地址
+     * 注意，这里pay-notify是示例地址，建议开发者应该设立一个隐蔽的回调地址
      *
-     * @param request 请求内容
+     * @param request  请求内容
      * @param response 响应内容
      * @return 操作结果
      */

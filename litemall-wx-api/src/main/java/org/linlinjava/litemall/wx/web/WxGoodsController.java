@@ -1,6 +1,6 @@
 package org.linlinjava.litemall.wx.web;
 
-import com.mysql.jdbc.StringUtils;
+import com.qcloud.cos.utils.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.linlinjava.litemall.core.system.SystemConfig;
@@ -57,7 +57,9 @@ public class WxGoodsController {
     @Autowired
     private LitemallGoodsSpecificationService goodsSpecificationService;
     @Autowired
-    private LitemallGrouponRulesService rulesService;
+    private LitemallGrouponRulesService grouponRulesService;
+    @Autowired
+    private LitemallFlashSalesRulesService flashSalesRulesService;
 
 
     /**
@@ -106,10 +108,12 @@ public class WxGoodsController {
             c.put("id", comment.getId());
             c.put("addTime", comment.getAddTime());
             c.put("content", comment.getContent());
-            LitemallUser user = userService.findById(comment.getUserId());
-            c.put("nickname", user.getNickname());
-            c.put("avatar", user.getAvatar());
             c.put("picList", comment.getPicUrls());
+            LitemallUser user = userService.findById(comment.getUserId());
+            if (user != null) {
+                c.put("nickname", user.getNickname());
+                c.put("avatar", user.getAvatar());
+            }
             commentsVo.add(c);
         }
         Map<String, Object> commentList = new HashMap<>();
@@ -117,7 +121,10 @@ public class WxGoodsController {
         commentList.put("data", commentsVo);
 
         //团购信息
-        List<LitemallGrouponRules> rules = rulesService.queryByGoodsId(id);
+        List<LitemallGrouponRules> grouponRules = grouponRulesService.queryByGoodsId(id);
+
+        //抢购信息
+        LitemallFlashSalesRulesResponse flashSalesRule = flashSalesRulesService.queryFirstByGoodsId(id);
 
         // 用户收藏
         int userHasCollect = 0;
@@ -142,8 +149,11 @@ public class WxGoodsController {
         data.put("productList", productList);
         data.put("attribute", goodsAttributeList);
         data.put("brand", brand);
-        data.put("groupon", rules);
-
+        data.put("groupon", grouponRules);
+        if (flashSalesRule != null) {
+            flashSalesRule.setFlashSalesPrice(info.getRetailPrice().subtract(flashSalesRule.getDiscount()));
+            data.put("flashSalesRule", flashSalesRule);
+        }
         //商品分享图片地址
         data.put("shareImage", info.getShareUrl());
         return ResponseUtil.ok(data);
@@ -213,6 +223,16 @@ public class WxGoodsController {
 
         //查询列表数据
         List<LitemallGoods> goodsList = goodsService.querySelective(categoryId, brandId, keyword, isHot, isNew, page, size, sort, order);
+        if (goodsList != null && goodsList.size() > 0) {
+            for (LitemallGoods goods : goodsList){
+                //抢购信息
+                LitemallFlashSalesRulesResponse flashSalesRule = flashSalesRulesService.queryFirstByGoodsId(goods.getId());
+                if (flashSalesRule != null) {
+                    goods.setRetailPrice(goods.getRetailPrice().subtract(flashSalesRule.getDiscount()));
+                }
+            }
+        }
+
         int total = goodsService.countSelective(categoryId, brandId, keyword, isHot, isNew, page, size, sort, order);
 
         // 查询商品所属类目列表。

@@ -259,6 +259,18 @@ export const asyncRouterMap = [
         component: () => import('@/views/promotion/grouponActivity'),
         name: 'grouponActivity',
         meta: { title: '团购活动', noCache: true }
+      },
+      {
+        path: 'flashSales-rule',
+        component: () => import('@/views/promotion/flashSalesRule'),
+        name: 'flashSalesRule',
+        meta: { title: '抢购规则', noCache: true }
+      },
+      {
+        path: 'flashSales-activity',
+        component: () => import('@/views/promotion/flashSalesActivity'),
+        name: 'flashSalesActivity',
+        meta: { title: '抢购活动', noCache: true }
       }
     ]
   },

@@ -108,4 +108,13 @@ public class LitemallCategoryService {
         example.or().andLevelEqualTo("L1").andDeletedEqualTo(false);
         return categoryMapper.selectByExampleSelective(example, CHANNEL);
     }
+
+    public List<LitemallCategory> queryFlashSalesIndexChannel() {
+        LitemallCategoryExample example = new LitemallCategoryExample();
+        example.or().andLevelEqualTo("L1")
+                .andHomeShowEqualTo(true)
+                .andDeletedEqualTo(false);
+        example.setOrderByClause("sort_order");
+        return categoryMapper.selectByExampleSelective(example, CHANNEL);
+    }
 }

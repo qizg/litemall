@@ -211,7 +211,8 @@ Page({
         wx.removeStorageSync('token');
         wx.removeStorageSync('userInfo');
         wx.reLaunch({
-          url: '/pages/index/index'
+          // url: '/pages/index/index'
+          url: '/pages/flashSalesIndex/index'
         });
       }
     })

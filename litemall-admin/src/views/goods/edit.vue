@@ -16,7 +16,7 @@
           </el-input>
         </el-form-item>
         <el-form-item label="当前价格" prop="retailPrice">
-          <el-input v-model="goods.retailPrice" placeholder="0.00">
+          <el-input v-model="goods.retailPrice" placeholder="0.00" @change="handleGoodsRetailPrice">
             <template slot="append">元</template>
           </el-input>
         </el-form-item>
@@ -85,8 +85,8 @@
     </el-card>
 
     <el-card class="box-card">
-      <h3>商品规格</h3>
-      <el-button :plain="true" type="primary" @click="handleSpecificationShow">添加</el-button>
+      <h3>商品规格（暂不支持多规格）</h3>
+      <el-button :plain="true" type="primary" disabled @click="handleSpecificationShow">添加</el-button>
 
       <el-table :data="specifications">
         <el-table-column property="specification" label="规格名" />
@@ -104,7 +104,7 @@
         </el-table-column>
         <el-table-column align="center" label="操作" width="250" class-name="small-padding fixed-width">
           <template slot-scope="scope">
-            <el-button type="danger" size="mini" @click="handleSpecificationDelete(scope.row)">删除</el-button>
+            <el-button type="danger" size="mini" disabled @click="handleSpecificationDelete(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -378,7 +378,7 @@ export default {
         .then(response => {
           this.$notify.success({
             title: '成功',
-            message: '创建成功'
+            message: '更新商品成功'
           })
           this.$router.push({ path: '/goods/list' })
         })
@@ -578,6 +578,9 @@ export default {
     handleAttributeDelete(row) {
       const index = this.attributes.indexOf(row)
       this.attributes.splice(index, 1)
+    },
+    handleGoodsRetailPrice() {
+      this.products[0].price = this.goods.retailPrice
     }
   }
 }

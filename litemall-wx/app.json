@@ -1,5 +1,6 @@
 {
   "pages": [
+    "pages/flashSalesIndex/index",
     "pages/index/index",
     "pages/catalog/catalog",
     "pages/newGoods/newGoods",
@@ -36,11 +37,12 @@
     "pages/groupon/myGroupon/myGroupon",
     "pages/groupon/grouponDetail/grouponDetail",
     "pages/groupon/grouponList/grouponList",
-    "pages/coupon/coupon"
+    "pages/coupon/coupon",
+    "pages/switchcity/switchcity"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FFFFFF",
-    "navigationBarTitleText": "litemall小程序商城",
+    "navigationBarTitleText": "几个水果",
     "enablePullDownRefresh": true,
     "navigationBarTextStyle": "black",
     "backgroundColor": "#FFFFFF",
@@ -51,18 +53,13 @@
     "borderStyle": "white",
     "selectedColor": "#AB956D",
     "color": "#666",
+    "c": "\n      {\n        \"pagePath\": \"pages/catalog/catalog\",\n        \"iconPath\": \"static/images/category.png\",\n        \"selectedIconPath\": \"static/images/category@selected.png\",\n        \"text\": \"分类\"\n      },",
     "list": [
       {
-        "pagePath": "pages/index/index",
+        "pagePath": "pages/flashSalesIndex/index",
         "iconPath": "static/images/home.png",
         "selectedIconPath": "static/images/home@selected.png",
         "text": "首页"
-      },
-      {
-        "pagePath": "pages/catalog/catalog",
-        "iconPath": "static/images/category.png",
-        "selectedIconPath": "static/images/category@selected.png",
-        "text": "分类"
       },
       {
         "pagePath": "pages/cart/cart",
@@ -74,7 +71,7 @@
         "pagePath": "pages/ucenter/index/index",
         "iconPath": "static/images/my.png",
         "selectedIconPath": "static/images/my@selected.png",
-        "text": "个人"
+        "text": "我的"
       }
     ]
   },
@@ -84,5 +81,10 @@
     "uploadFile": 10000,
     "downloadFile": 10000
   },
-  "debug": true
+  "debug": true,
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于获取当前城市"
+    }
+  }
 }

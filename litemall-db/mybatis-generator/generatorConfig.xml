@@ -42,7 +42,7 @@
         </commentGenerator>
 
         <!--数据库连接信息-->
-        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+        <jdbcConnection driverClass="org.mariadb.jdbc.Driver"
                         connectionURL="jdbc:mysql://127.0.0.1:3306/litemall?useUnicode=true&amp;characterEncoding=UTF-8&amp;serverTimezone=UTC&amp;verifyServerCertificate=false&amp;useSSL=false"
                         userId="litemall"
                         password="litemall123456"/>
@@ -56,7 +56,7 @@
         <javaClientGenerator type="XMLMAPPER" targetPackage="org.linlinjava.litemall.db.dao"
                              targetProject="src/main/java"/>
         <!--表名-->
-        <table tableName="litemall_ad">
+        <!--<table tableName="litemall_ad">
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
         </table>
         <table tableName="litemall_address">
@@ -165,6 +165,17 @@
         </table>
         <table tableName="litemall_coupon_user">
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>-->
+
+        <table tableName="litemall_flash_sales_rules">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="deleted" javaType="java.lang.Boolean"/>
         </table>
+        <table tableName="litemall_flash_sales">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="payed" javaType="java.lang.Boolean"/>
+            <columnOverride column="deleted" javaType="java.lang.Boolean"/>
+        </table>
+
     </context>
 </generatorConfiguration>

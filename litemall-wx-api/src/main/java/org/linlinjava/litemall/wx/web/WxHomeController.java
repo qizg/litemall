@@ -42,6 +42,8 @@ public class WxHomeController {
     private LitemallGrouponRulesService grouponRulesService;
     @Autowired
     private LitemallCouponService couponService;
+    @Autowired
+    private LitemallFlashSalesRulesService flashSalesRulesService;
 
     @GetMapping("/cache")
     public Object cache(@NotNull String key) {
@@ -118,8 +120,47 @@ public class WxHomeController {
         }
         data.put("floorGoodsList", categoryList);
 
+        //抢购专区
+        List<Map<String, Object>> flashSalesList = flashSalesRulesService.queryList(0, 5);
+        data.put("flashSaleList", flashSalesList);
+
         //缓存数据
         HomeCacheManager.loadData(HomeCacheManager.INDEX, data);
+        return ResponseUtil.ok(data);
+    }
+
+    /**
+     * 首页数据
+     *
+     * @return 首页数据
+     */
+    @GetMapping("/flashSalesIndex")
+    public Object flashSalesIndex(@NotNull Integer page) {
+        //优先从缓存中读取
+        if (page <= 1 && HomeCacheManager.hasData(HomeCacheManager.FLASH_SALES_INDEX)) {
+            return ResponseUtil.ok(HomeCacheManager.getCacheData(HomeCacheManager.FLASH_SALES_INDEX));
+        }
+
+        Map<String, Object> data = new HashMap<>(3);
+        if (page <= 1) {
+            List<LitemallAd> banner = adService.queryIndex();
+            data.put("banner", banner);
+
+            List<LitemallCategory> channel = categoryService.queryFlashSalesIndexChannel();
+            data.put("channel", channel);
+        }
+
+        //抢购专区
+        if (page <= 1) {
+            page = 1;
+        }
+        List<Map<String, Object>> flashSalesList = flashSalesRulesService.queryList(page, 10);
+        data.put("flashSaleList", flashSalesList);
+
+        //缓存数据
+        if (page <= 1) {
+            HomeCacheManager.loadData(HomeCacheManager.FLASH_SALES_INDEX, data);
+        }
         return ResponseUtil.ok(data);
     }
 }

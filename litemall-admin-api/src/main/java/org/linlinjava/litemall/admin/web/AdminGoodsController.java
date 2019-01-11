@@ -22,13 +22,13 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.linlinjava.litemall.admin.util.AdminResponseCode.GOODS_NAME_EXIST;
-import static org.linlinjava.litemall.admin.util.AdminResponseCode.GOODS_UPDATE_NOT_ALLOWED;
 
 @RestController
 @RequestMapping("/admin/goods")
@@ -157,13 +157,16 @@ public class AdminGoodsController {
      * 1. 更新litemall_goods表
      * 2. 逻辑删除litemall_goods_specification、litemall_goods_attribute、litemall_goods_product
      * 3. 添加litemall_goods_specification、litemall_goods_attribute、litemall_goods_product
-     *
+     * <p>
      * 这里商品三个表的数据采用删除再添加的策略是因为
      * 商品编辑页面，支持管理员添加删除商品规格、添加删除商品属性，因此这里仅仅更新是不可能的，
      * 只能删除三个表旧的数据，然后添加新的数据。
      * 但是这里又会引入新的问题，就是存在订单商品货品ID指向了失效的商品货品表。
      * 因此这里会拒绝管理员编辑商品，如果订单或购物车中存在商品。
      * 所以这里可能需要重新设计。
+     * <p>
+     * <p>
+     * TODO 暂时取消商品多规格支持。
      */
     @PostMapping("/update")
     public Object update(@LoginAdmin Integer adminId, @RequestBody GoodsAllinone goodsAllinone) {
@@ -181,15 +184,19 @@ public class AdminGoodsController {
         LitemallGoodsSpecification[] specifications = goodsAllinone.getSpecifications();
         LitemallGoodsProduct[] products = goodsAllinone.getProducts();
 
-        Integer id = goods.getId();
-        // 检查是否存在购物车商品或者订单商品
-        // 如果存在则拒绝修改商品。
-        if(orderGoodsService.checkExist(id)){
-            return ResponseUtil.fail(GOODS_UPDATE_NOT_ALLOWED, "商品已经在订单中，不能修改");
+        if (products.length > 1) {
+            return ResponseUtil.fail();
         }
-        if(cartService.checkExist(id)){
-            return ResponseUtil.fail(GOODS_UPDATE_NOT_ALLOWED, "商品已经在购物车中，不能修改");
-        }
+
+//        Integer id = goods.getId();
+//        // 检查是否存在购物车商品或者订单商品
+//        // 如果存在则拒绝修改商品。
+//        if(orderGoodsService.checkExist(id)){
+//            return ResponseUtil.fail(GOODS_UPDATE_NOT_ALLOWED, "商品已经在订单中，不能修改");
+//        }
+//        if(cartService.checkExist(id)){
+//            return ResponseUtil.fail(GOODS_UPDATE_NOT_ALLOWED, "商品已经在购物车中，不能修改");
+//        }
 
         // 开启事务管理
         DefaultTransactionDefinition def = new DefaultTransactionDefinition();
@@ -207,15 +214,15 @@ public class AdminGoodsController {
             }
 
             Integer gid = goods.getId();
-            specificationService.deleteByGid(gid);
+//            specificationService.deleteByGid(gid);
             attributeService.deleteByGid(gid);
-            productService.deleteByGid(gid);
+//            productService.deleteByGid(gid);
 
-            // 商品规格表litemall_goods_specification
-            for (LitemallGoodsSpecification specification : specifications) {
-                specification.setGoodsId(goods.getId());
-                specificationService.add(specification);
-            }
+//            // 商品规格表litemall_goods_specification
+//            for (LitemallGoodsSpecification specification : specifications) {
+//                specification.setGoodsId(goods.getId());
+//                specificationService.add(specification);
+//            }
 
             // 商品参数表litemall_goods_attribute
             for (LitemallGoodsAttribute attribute : attributes) {
@@ -223,11 +230,22 @@ public class AdminGoodsController {
                 attributeService.add(attribute);
             }
 
-            // 商品货品表litemall_product
-            for (LitemallGoodsProduct product : products) {
-                product.setGoodsId(goods.getId());
-                productService.add(product);
+//            // 商品货品表litemall_product
+//            for (LitemallGoodsProduct product : products) {
+//                product.setGoodsId(goods.getId());
+//                productService.add(product);
+//            }
+
+            List<LitemallGoodsProduct> goodsProducts = productService.queryByGid(gid);
+            if (goodsProducts!=null&& goodsProducts.size() == 1) {
+                LitemallGoodsProduct oldProduct = goodsProducts.get(0);
+                LitemallGoodsProduct newProduct = products[0];
+                newProduct.setId(oldProduct.getId());
+                productService.update(newProduct);
+            } else {
+                throw new Exception("更新数据失败");
             }
+
         } catch (Exception ex) {
             txManager.rollback(status);
             logger.error("系统内部错误", ex);

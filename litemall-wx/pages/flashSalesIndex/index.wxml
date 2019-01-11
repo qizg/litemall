@@ -1,0 +1,121 @@
+<!--index.wxml-->
+<view class="container">
+
+    <!-- 顶部搜索栏 -->
+    <view class="searchBar">
+        <view class="text">
+            <text>{{periodText}}</text>
+        </view>
+        <navigator class="text" url="/pages/switchcity/switchcity"><!--bindtap="toChooseAddress"-->
+            <text>{{localAddressText}}</text>
+            <image src='/static/images/down.png'></image>
+        </navigator>
+        <view class="text">
+            <navigator url="/pages/search/search" class="searBar-box">
+                <icon class="icon" type="search" size="26rpx"/>
+                <text>搜索商品</text>
+            </navigator>
+        </view>
+    </view>
+
+
+    <swiper class="banner" indicator-dots="true" autoplay="true" interval="3000" duration="1000">
+        <swiper-item wx:for="{{banner}}" wx:key="id">
+            <navigator url="{{item.link}}" wx:if="{{item.type===1}}">
+                <image src="{{item.url}}" background-size="cover"></image>
+            </navigator>
+            <image wx:else src="{{item.url}}" background-size="cover" data-banner="{{item}}"
+                   bindtap="showWebView"></image>
+        </swiper-item>
+    </swiper>
+    <view class="m-menu" id="channel">
+        <view wx:for="{{channel}}" wx:key="id">
+            <navigator class="item" wx:if="{{index}}" url="/pages/category/category?id={{item.id}}">
+                <image src="{{item.iconUrl}}" background-size="cover"></image>
+                <text>{{item.name}}</text>
+            </navigator>
+            <view class="item" wx:else bindtap="skipContent">
+                <image src="{{item.iconUrl}}" background-size="cover"></image>
+                <text>{{item.name}}</text>
+            </view>
+        </view>
+    </view>
+
+    <view class="a-section a-coupon" wx:if="{{coupon.length > 0}}">
+        <view class="h">
+            <view class="title">
+                <view>
+                    <navigator url="/pages/coupon/coupon">
+                        <text class="txt">优惠券</text>
+                    </navigator>
+                </view>
+            </view>
+        </view>
+        <view class="b">
+            <view class="item" wx:for="{{coupon}}" wx:for-index="index" wx:for-item="item" wx:key="id"
+                  bindtap="getCoupon" data-index="{{item.id}}">
+                <view class="tag">{{item.tag}}</view>
+                <view class="content">
+                    <view class="left">
+                        <view class="discount">{{item.discount}}元</view>
+                        <view class="min"> 满{{item.min}}元使用</view>
+                    </view>
+                    <view class="right">
+                        <view class="name">{{item.name}}</view>
+                        <view class="desc">{{item.desc}}</view>
+                        <view class="time" wx:if="{{item.days != 0}}">有效期：{{item.days}}天</view>
+                        <view class="time" wx:else> 有效期：{{item.startTime}} - {{item.endTime}}</view>
+                    </view>
+                </view>
+            </view>
+        </view>
+    </view>
+
+
+    <view class="a-section a-groupon" wx:if="{{flashSales.length > 0}}">
+        <view class="h">
+            <view class="title">
+                <image class="img" src="/static/images/bg_flash_sale_top.png" mode="aspectFit"></image>
+            </view>
+        </view>
+        <view class="b">
+            <view class="item" wx:for="{{flashSales}}" wx:for-index="index" wx:for-item="item" wx:key="id">
+                <navigator url="/pages/goods/goods?id={{item.goods.id}}">
+                    <image class="img" src="{{item.goods.picUrl}}" background-size="cover"></image>
+                    <view class="right flashSales">
+                        <view class="text">
+                            <text class="name">{{item.goods.name}}</text>
+                            <view class="time-tag">
+                                <zan-capsule color="#a78845" leftText="距结束" rightText="{{item.difftime}}"/>
+                            </view>
+                            <text class="sales">已售{{item.sold_number}}件 / 还剩{{item.last_number}}件
+                            </text>
+                            <view class="price">
+                                <view class="counterPrice">原价：￥{{item.goods.counterPrice}}</view>
+                                <view class="retailPrice">现价：￥{{item.flash_sales_price}}</view>
+                            </view>
+                        </view>
+                    </view>
+                </navigator>
+                <image class="goods_cart_right" src="/static/images/ic_menu_shoping_nor.png"
+                       mode="aspectFit" background-size="cover"
+                       data-goods="{{item}}" bindtap="addToCart"></image>
+                <view class="mask" wx:if="{{!item.last_number}}"><view class="img-mask">已抢光</view></view>
+            </view>
+        </view>
+    </view>
+
+    <view class="weui-loadmore" hidden="{{isHideLoadMore}}">
+        <view class="weui-loading"></view>
+        <view class="weui-loadmore__tips">正在加载</view>
+    </view>
+    <view class="weui-loadmore" hidden="{{!noMore}}">
+        <view class="weui-loadmore__tips">没有更多啦</view>
+    </view>
+
+    <view class="widget-goTop" bindtap="goTop" wx:if="{{ floorstatus }}">
+        <view class="gotop-wrap">
+            <image class="icon icon-top" src="/static/images/up.svg"/>
+        </view>
+    </view>
+</view>
