@@ -29,7 +29,7 @@ Page({
     return {
       title: '邀请团购',
       desc: '唯爱与美食不可辜负',
-      path: '/pages/index/index?grouponId=' + this.data.linkGrouponId
+      path: '/pages/flashSalesIndex/index?grouponId=' + this.data.linkGrouponId
     }
   },
 

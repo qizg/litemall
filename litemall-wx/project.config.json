@@ -12,7 +12,7 @@
 	"compileType": "miniprogram",
 	"libVersion": "2.4.3",
 	"appid": "wx27f7fad4a00175ef",
-	"projectname": "litemall-wx",
+	"projectname": "jigeshuiguo",
 	"condition": {
 		"search": {
 			"current": -1,
@@ -35,7 +35,7 @@
 				{
 					"id": -1,
 					"name": "首页",
-					"pathName": "pages/index/index",
+					"pathName": "pages/flashSalesIndex/index",
 					"query": ""
 				},
 				{
@@ -89,7 +89,7 @@
 				{
 					"id": -1,
 					"name": "分类",
-					"pathName": "pages/catalog/catalog",
+					"pathName": "pages/freshCatalog/catalog",
 					"query": ""
 				},
 				{
@@ -227,7 +227,7 @@
 				{
 					"id": -1,
 					"name": "测试更新",
-					"pathName": "pages/index/index",
+					"pathName": "pages/flashSalesIndex/index",
 					"query": ""
 				},
 				{

@@ -4,7 +4,7 @@
     <el-card class="box-card">
       <h3>商品介绍</h3>
       <el-form ref="goods" :rules="rules" :model="goods" label-width="150px">
-        <el-form-item label="商品编号" prop="goodsSn">
+        <el-form-item label="商品SN编号" prop="goodsSn">
           <el-input v-model="goods.goodsSn"/>
         </el-form-item>
         <el-form-item label="商品名称" prop="name">

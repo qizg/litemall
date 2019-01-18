@@ -17,3 +17,4 @@ logging:
     org.linlinjava.litemall.admin:  ERROR
     org.linlinjava.litemall.wx:  ERROR
     org.linlinjava.litemall:  ERROR
+  file: litemall.log

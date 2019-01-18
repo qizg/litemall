@@ -1,0 +1,45 @@
+<view class="container">
+  <view class="search">
+    <navigator url="/pages/search/search" class="input">
+      <image class="icon"></image>
+      <text class="txt">商品搜索, 共{{goodsCount}}款好物</text>
+    </navigator>
+  </view>
+  <view class="catalog">
+    <scroll-view class="nav" scroll-y="true">
+      <view class="item {{ currentCategory.id == item.id ? 'active' : ''}}"
+            wx:for="{{categoryList}}" wx:key="id" data-id="{{item.id}}" data-index="{{index}}"
+            bindtap="switchCate">{{item.name}}</view>
+    </scroll-view>
+
+    <scroll-view class="cate" scroll-y="true" scroll-top="{{cateScrollTop}}">
+<!--      <scroll-view scroll-x="true" class="cate-top">
+        <text class="txt" wx:key="id" wx:for="{{currentSubCategoryList}}">{{item.name}}</text>
+      </scroll-view>-->
+
+      <view class="bd">
+        <view class="item-{{index}} goods {{item.reqData?'':'height'}}" data-id="{{item.id}}" data-index="{{index}}"
+              wx:key="id" wx:for="{{currentSubCategoryList}}">
+          <text class="title">{{item.name}}</text>
+
+          <view class="hd" wx:key="id" wx:for="{{currentSubCategoryList[index].resultDatas}}">
+            <navigator url="/pages/goods/goods?id={{item.goods.id}}" class="goods-item">
+              <image class="img" src="{{item.goods.picUrl}}" background-size="cover"></image>
+              <view class="right">
+                <text class="name">{{item.goods.name}}</text>
+                <text class="retailPrice">￥{{item.flash_sales_price?item.flash_sales_price:item.goods.retailPrice}}</text>
+                <view>
+                  <image class="goods_cart_right" src="/static/images/ic_menu_shoping_nor.png"
+                         mode="aspectFit" background-size="cover"
+                         data-goods="{{item}}" catchtap="addToCart"></image>
+                </view>
+              </view>
+            </navigator>
+
+          </view>
+        </view>
+
+      </view>
+    </scroll-view>
+  </view>
+</view>
