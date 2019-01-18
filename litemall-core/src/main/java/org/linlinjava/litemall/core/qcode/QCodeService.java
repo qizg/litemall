@@ -27,7 +27,7 @@ public class QCodeService {
     public String createGrouponShareImage(String goodName, String goodPicUrl, LitemallGroupon groupon) {
         try {
             //创建该商品的二维码
-            File file = wxMaService.getQrcodeService().createWxaCodeUnlimit("groupon," + groupon.getId(), "pages/index/index");
+            File file = wxMaService.getQrcodeService().createWxaCodeUnlimit("groupon," + groupon.getId(), "pages/flashSalesIndex/index");
             FileInputStream inputStream = new FileInputStream(file);
             //将商品图片，商品名字,商城名字画到模版图中
             byte[] imageData = drawPicture(inputStream, goodPicUrl, goodName);
@@ -61,7 +61,7 @@ public class QCodeService {
 
         try {
             //创建该商品的二维码
-            File file = wxMaService.getQrcodeService().createWxaCodeUnlimit("goods," + goodId, "pages/index/index");
+            File file = wxMaService.getQrcodeService().createWxaCodeUnlimit("goods," + goodId, "pages/flashSalesIndex/index");
             FileInputStream inputStream = new FileInputStream(file);
             //将商品图片，商品名字,商城名字画到模版图中
             byte[] imageData = drawPicture(inputStream, goodPicUrl, goodName);

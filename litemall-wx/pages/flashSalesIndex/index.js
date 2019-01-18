@@ -30,7 +30,7 @@ Page({
     return {
       title: '几个水果',
       desc: '几个水果小程序商城',
-      path: '/pages/index/index'
+      path: '/pages/flashSalesIndex/index'
     }
   },
 
@@ -100,7 +100,7 @@ Page({
         });
       } else {
         wx.navigateTo({
-          url: '../index/index'
+          url: '../flashSalesIndex/index'
         });
       }
     }
@@ -177,6 +177,7 @@ Page({
       wx.navigateTo({
         url: "/pages/auth/login/login"
       });
+      return false;
     }
 
     let goodsId = event.target.dataset.goods.goods.id;
@@ -216,8 +217,14 @@ Page({
 
   showWebView: function (event) {
     let type = event.target.dataset.banner.type;
-
     let link = event.target.dataset.banner.link;
+
+    if (type ===2){
+      wx.navigateTo({
+        url:'/pages/webview/web?article='+link
+      });
+    }
+
   },
 
   nowTime: function () {//时间函数
@@ -317,15 +324,17 @@ Page({
     });
   },
 
-  skipContent: function () {
-    const query = wx.createSelectorQuery();
+  skipMenu: function (event) {
+    /*const query = wx.createSelectorQuery();
     query.select('#channel').boundingClientRect();
     query.exec(function (res) {
       wx.pageScrollTo({
         scrollTop: res[0].top + 30,
         duration: 300
       })
-    })
+    })*/
+    app.globalData.indexSkipCatalogId = event.currentTarget.dataset.itemid;
+    wx.switchTab({url:"/pages/freshCatalog/catalog"});
   },
   // 获取滚动条当前位置
   onPageScroll: function (e) {

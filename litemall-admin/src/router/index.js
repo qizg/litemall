@@ -248,6 +248,7 @@ export const asyncRouterMap = [
         name: 'topic',
         meta: { title: '专题管理', noCache: true }
       },
+      /**
       {
         path: 'groupon-rule',
         component: () => import('@/views/promotion/grouponRule'),
@@ -260,6 +261,7 @@ export const asyncRouterMap = [
         name: 'grouponActivity',
         meta: { title: '团购活动', noCache: true }
       },
+       */
       {
         path: 'flashSales-rule',
         component: () => import('@/views/promotion/flashSalesRule'),
@@ -336,6 +338,7 @@ export const asyncRouterMap = [
       }
     ]
   },
+  /**
   {
     path: 'external-link',
     component: Layout,
@@ -376,6 +379,7 @@ export const asyncRouterMap = [
       }
     ]
   },
+  */
   {
     path: '/profile',
     component: Layout,

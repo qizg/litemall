@@ -60,6 +60,8 @@ public class WxGoodsController {
     private LitemallGrouponRulesService grouponRulesService;
     @Autowired
     private LitemallFlashSalesRulesService flashSalesRulesService;
+    @Autowired
+    private LitemallFlashSalesService flashSalesService;
 
 
     /**
@@ -224,7 +226,7 @@ public class WxGoodsController {
         //查询列表数据
         List<LitemallGoods> goodsList = goodsService.querySelective(categoryId, brandId, keyword, isHot, isNew, page, size, sort, order);
         if (goodsList != null && goodsList.size() > 0) {
-            for (LitemallGoods goods : goodsList){
+            for (LitemallGoods goods : goodsList) {
                 //抢购信息
                 LitemallFlashSalesRulesResponse flashSalesRule = flashSalesRulesService.queryFirstByGoodsId(goods.getId());
                 if (flashSalesRule != null) {
@@ -248,6 +250,40 @@ public class WxGoodsController {
         data.put("goodsList", goodsList);
         data.put("filterCategoryList", categoryList);
         data.put("count", total);
+        return ResponseUtil.ok(data);
+    }
+
+    @GetMapping("listCategory")
+    public Object listAllByCategoryId(Integer categoryId) {
+
+        List<Map<String, Object>> resultDataList = new ArrayList<>();
+
+        //查询列表数据
+        List<LitemallGoods> goodsList = goodsService.queryByCategory(categoryId, 0, goodsService.count());
+        if (goodsList != null && goodsList.size() > 0) {
+            for (LitemallGoods goods : goodsList) {
+
+                Map<String, Object> item = new HashMap<>(6);
+                item.put("goods", goods);
+
+                LitemallGoodsProduct goodsProduct = productService.findOneByGoodsId(goods.getId());
+                item.put("goods_product_id", goodsProduct.getId());
+
+                //抢购信息
+                LitemallFlashSalesRulesResponse flashSalesRule = flashSalesRulesService.queryFirstByGoodsId(goods.getId());
+                if (flashSalesRule != null) {
+                    item.put("flash_sales_price", goods.getRetailPrice().subtract(flashSalesRule.getDiscount()));
+                    int soldNum = flashSalesService.countFlashSales(flashSalesRule.getId());
+                    item.put("last_number", flashSalesRule.getNumber() - soldNum);
+                } else {
+                    item.put("last_number", goodsProduct.getNumber());
+                }
+
+                resultDataList.add(item);
+            }
+        }
+        Map<String, Object> data = new HashMap<>(1);
+        data.put("resultDataList", resultDataList);
         return ResponseUtil.ok(data);
     }
 

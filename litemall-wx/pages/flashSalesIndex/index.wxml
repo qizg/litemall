@@ -30,11 +30,7 @@
     </swiper>
     <view class="m-menu" id="channel">
         <view wx:for="{{channel}}" wx:key="id">
-            <navigator class="item" wx:if="{{index}}" url="/pages/category/category?id={{item.id}}">
-                <image src="{{item.iconUrl}}" background-size="cover"></image>
-                <text>{{item.name}}</text>
-            </navigator>
-            <view class="item" wx:else bindtap="skipContent">
+            <view class="item" bindtap="skipMenu" data-itemid="{{item.id}}">
                 <image src="{{item.iconUrl}}" background-size="cover"></image>
                 <text>{{item.name}}</text>
             </view>

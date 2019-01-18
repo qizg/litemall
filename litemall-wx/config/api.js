@@ -4,7 +4,7 @@
 // 局域网测试使用
 var WxApiRoot = 'http://192.168.1.143:8080/wx/';
 // 云平台部署时使用
-// var WxApiRoot = 'http://122.152.206.172:8080/wx/';
+// var WxApiRoot = 'http://39.96.11.67/wx/';
 // 云平台上线时使用
 // var WxApiRoot = 'https://www.menethil.com.cn/wx/';
 
@@ -29,6 +29,7 @@ module.exports = {
   GoodsNew: WxApiRoot + 'goods/new', //新品
   GoodsHot: WxApiRoot + 'goods/hot', //热门
   GoodsRelated: WxApiRoot + 'goods/related', //商品详情页的关联商品（大家都在看）
+  GoodsByCategory: WxApiRoot + 'goods/listCategory', //获得分类下所有商品
 
   BrandList: WxApiRoot + 'brand/list', //品牌列表
   BrandDetail: WxApiRoot + 'brand/detail', //品牌详情

@@ -14,7 +14,7 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  padding-bottom: 0rpx;
+  padding-bottom: 25rpx;
   padding-top: 25rpx;
 }
 
@@ -25,8 +25,8 @@
 
 .m-menu image {
   display: block;
-  width: 58rpx;
-  height: 58rpx;
+  width: 95rpx;
+  height: 95rpx;
   margin: 0 auto;
   margin-bottom: 12rpx;
 }

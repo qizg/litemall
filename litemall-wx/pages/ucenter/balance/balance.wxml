@@ -1,0 +1,11 @@
+<view class="container">
+
+    <view class="balance_content">
+        <view class="balance_content_title">余额</view>
+        <text class="price_tag">￥</text><text class="price">{{balance}}</text>
+    </view>
+
+    <view class="recharge_bg">
+        <view class="recharge" bindtap="recharge">立即储值</view>
+    </view>
+</view>
