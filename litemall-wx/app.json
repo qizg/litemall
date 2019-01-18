@@ -40,7 +40,8 @@
     "pages/groupon/grouponList/grouponList",
     "pages/coupon/coupon",
     "pages/switchcity/switchcity",
-    "pages/webview/web"
+    "pages/webview/web",
+    "pages/ucenter/balance/balance"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FFFFFF",

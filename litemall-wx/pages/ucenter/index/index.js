@@ -15,7 +15,8 @@ Page({
       unrecv: 0,
       uncomment: 0
     },
-    hasLogin: false
+    hasLogin: false,
+    balance: 0
   },
   onLoad: function(options) {
     // 页面初始化 options为页面跳转所带来的参数
@@ -94,6 +95,18 @@ Page({
     if (this.data.hasLogin) {
       wx.navigateTo({
         url: "/pages/ucenter/couponList/couponList"
+      });
+    } else {
+      wx.navigateTo({
+        url: "/pages/auth/login/login"
+      });
+    };
+  },
+  goBalance(event) {
+    if (this.data.hasLogin) {
+      let balance = event.currentTarget.dataset.balance;
+      wx.navigateTo({
+        url: "/pages/ucenter/balance/balance?balance="+balance
       });
     } else {
       wx.navigateTo({

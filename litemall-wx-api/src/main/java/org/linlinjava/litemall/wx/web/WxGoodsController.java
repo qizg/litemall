@@ -1,6 +1,6 @@
 package org.linlinjava.litemall.wx.web;
 
-import com.mysql.jdbc.StringUtils;
+import com.qcloud.cos.utils.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.linlinjava.litemall.core.system.SystemConfig;

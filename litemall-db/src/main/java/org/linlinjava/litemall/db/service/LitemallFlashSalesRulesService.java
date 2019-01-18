@@ -3,6 +3,7 @@ package org.linlinjava.litemall.db.service;
 import com.alibaba.druid.util.StringUtils;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import org.linlinjava.litemall.db.dao.FlashSalesRulesMapper;
 import org.linlinjava.litemall.db.dao.LitemallFlashSalesRulesMapper;
 import org.linlinjava.litemall.db.dao.LitemallGoodsMapper;
 import org.linlinjava.litemall.db.domain.*;
@@ -23,6 +24,8 @@ public class LitemallFlashSalesRulesService {
     private LitemallFlashSalesRulesMapper mapper;
     @Resource
     private LitemallGoodsMapper goodsMapper;
+    @Resource
+    private FlashSalesRulesMapper flashSalesRulesMapper;
 
     @Autowired
     private LitemallFlashSalesService flashSalesService;
@@ -185,5 +188,13 @@ public class LitemallFlashSalesRulesService {
     public int updateById(LitemallFlashSalesRules flashSalesRules) {
         flashSalesRules.setUpdateTime(LocalDateTime.now());
         return mapper.updateByPrimaryKeySelective(flashSalesRules);
+    }
+
+    public int addStock(Integer id, Short num) {
+        return flashSalesRulesMapper.addStock(id, num);
+    }
+
+    public int reduceStock(Integer id, Short num) {
+        return flashSalesRulesMapper.reduceStock(id, num);
     }
 }

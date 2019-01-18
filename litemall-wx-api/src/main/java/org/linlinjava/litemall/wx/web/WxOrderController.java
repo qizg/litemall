@@ -430,6 +430,17 @@ public class WxOrderController {
                 if (productService.reduceStock(productId, checkGoods.getNumber()) == 0) {
                     throw new Exception("商品货品库存减少失败");
                 }
+                // 若为抢购商品，扣减抢购数量
+                LitemallFlashSalesRulesResponse flashSalesRule
+                        = flashSalesRulesService.queryFirstByGoodsId(checkGoods.getGoodsId());
+                if (flashSalesRule != null) {
+                    if (product.getNumber() - flashSalesRule.getNumber() < 0) {
+                        throw new RuntimeException("下单的商品货品数量大于抢购促销库存量");
+                    }
+                    if (flashSalesRulesService.reduceStock(flashSalesRule.getId(), checkGoods.getNumber()) == 0) {
+                        throw new Exception("促销商品货品库存减少失败");
+                    }
+                }
             }
 
             // 如果使用了优惠券，设置优惠券使用状态
@@ -546,6 +557,14 @@ public class WxOrderController {
                 if (productService.addStock(productId, number) == 0) {
                     throw new Exception("商品货品库存增加失败");
                 }
+                // 若为抢购商品，增加抢购数量
+                LitemallFlashSalesRulesResponse flashSalesRule
+                        = flashSalesRulesService.queryFirstByGoodsId(orderGoods.getGoodsId());
+                if (flashSalesRule != null) {
+                    if (flashSalesRulesService.addStock(flashSalesRule.getId(), number) == 0) {
+                        throw new Exception("促销商品货品库存增加失败");
+                    }
+                }
             }
         } catch (Exception ex) {
             txManager.rollback(status);
@@ -652,6 +671,7 @@ public class WxOrderController {
         String xmlResult = null;
         try {
             xmlResult = IOUtils.toString(request.getInputStream(), request.getCharacterEncoding());
+            logger.error(xmlResult);
         } catch (IOException e) {
             e.printStackTrace();
             return WxPayNotifyResponse.fail(e.getMessage());
@@ -743,7 +763,7 @@ public class WxOrderController {
                 order.getAddress()
         };
 
-        notifyService.notifyWxTemplate(result.getOpenid(), NotifyType.PAY_SUCCEED, parms, "pages/index/index?orderId=" + order.getId());
+        notifyService.notifyWxTemplate(result.getOpenid(), NotifyType.PAY_SUCCEED, parms, "pages/flashSalesIndex/index?orderId=" + order.getId());
 
         return WxPayNotifyResponse.success("处理成功!");
     }
