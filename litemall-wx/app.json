@@ -2,6 +2,7 @@
   "pages": [
     "pages/flashSalesIndex/index",
     "pages/index/index",
+    "pages/freshCatalog/catalog",
     "pages/catalog/catalog",
     "pages/newGoods/newGoods",
     "pages/hotGoods/hotGoods",
@@ -38,7 +39,8 @@
     "pages/groupon/grouponDetail/grouponDetail",
     "pages/groupon/grouponList/grouponList",
     "pages/coupon/coupon",
-    "pages/switchcity/switchcity"
+    "pages/switchcity/switchcity",
+    "pages/webview/web"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FFFFFF",
@@ -53,13 +55,18 @@
     "borderStyle": "white",
     "selectedColor": "#AB956D",
     "color": "#666",
-    "c": "\n      {\n        \"pagePath\": \"pages/catalog/catalog\",\n        \"iconPath\": \"static/images/category.png\",\n        \"selectedIconPath\": \"static/images/category@selected.png\",\n        \"text\": \"分类\"\n      },",
     "list": [
       {
         "pagePath": "pages/flashSalesIndex/index",
         "iconPath": "static/images/home.png",
         "selectedIconPath": "static/images/home@selected.png",
         "text": "首页"
+      },
+      {
+        "pagePath": "pages/freshCatalog/catalog",
+        "iconPath": "static/images/category.png",
+        "selectedIconPath": "static/images/category@selected.png",
+        "text": "分类"
       },
       {
         "pagePath": "pages/cart/cart",
