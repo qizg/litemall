@@ -143,6 +143,9 @@ public class AdminGoodsService {
      * 但是这里又会引入新的问题，就是存在订单商品货品ID指向了失效的商品货品表。
      * 因此这里会拒绝管理员编辑商品，如果订单或购物车中存在商品。
      * 所以这里可能需要重新设计。
+     * <p>
+     * <p>
+     * TODO 暂时取消商品多规格支持。
      */
     @Transactional
     public Object update(GoodsAllinone goodsAllinone) {
@@ -156,15 +159,19 @@ public class AdminGoodsService {
         LitemallGoodsSpecification[] specifications = goodsAllinone.getSpecifications();
         LitemallGoodsProduct[] products = goodsAllinone.getProducts();
 
-        Integer id = goods.getId();
-        // 检查是否存在购物车商品或者订单商品
-        // 如果存在则拒绝修改商品。
-        if (orderGoodsService.checkExist(id)) {
-            return ResponseUtil.fail(GOODS_UPDATE_NOT_ALLOWED, "商品已经在订单中，不能修改");
+        if (products.length > 1) {
+            return ResponseUtil.fail();
         }
-        if (cartService.checkExist(id)) {
-            return ResponseUtil.fail(GOODS_UPDATE_NOT_ALLOWED, "商品已经在购物车中，不能修改");
-        }
+
+//        Integer id = goods.getId();
+//        // 检查是否存在购物车商品或者订单商品
+//        // 如果存在则拒绝修改商品。
+//        if(orderGoodsService.checkExist(id)){
+//            return ResponseUtil.fail(GOODS_UPDATE_NOT_ALLOWED, "商品已经在订单中，不能修改");
+//        }
+//        if(cartService.checkExist(id)){
+//            return ResponseUtil.fail(GOODS_UPDATE_NOT_ALLOWED, "商品已经在购物车中，不能修改");
+//        }
 
         //将生成的分享图片地址写入数据库
         String url = qCodeService.createGoodShareImage(goods.getId().toString(), goods.getPicUrl(), goods.getName());
@@ -176,15 +183,15 @@ public class AdminGoodsService {
         }
 
         Integer gid = goods.getId();
-        specificationService.deleteByGid(gid);
+//            specificationService.deleteByGid(gid);
         attributeService.deleteByGid(gid);
-        productService.deleteByGid(gid);
+//            productService.deleteByGid(gid);
 
-        // 商品规格表litemall_goods_specification
-        for (LitemallGoodsSpecification specification : specifications) {
-            specification.setGoodsId(goods.getId());
-            specificationService.add(specification);
-        }
+//            // 商品规格表litemall_goods_specification
+//            for (LitemallGoodsSpecification specification : specifications) {
+//                specification.setGoodsId(goods.getId());
+//                specificationService.add(specification);
+//            }
 
         // 商品参数表litemall_goods_attribute
         for (LitemallGoodsAttribute attribute : attributes) {
@@ -192,11 +199,22 @@ public class AdminGoodsService {
             attributeService.add(attribute);
         }
 
-        // 商品货品表litemall_product
-        for (LitemallGoodsProduct product : products) {
-            product.setGoodsId(goods.getId());
-            productService.add(product);
+//            // 商品货品表litemall_product
+//            for (LitemallGoodsProduct product : products) {
+//                product.setGoodsId(goods.getId());
+//                productService.add(product);
+//            }
+
+        List<LitemallGoodsProduct> goodsProducts = productService.queryByGid(gid);
+        if (goodsProducts!=null&& goodsProducts.size() == 1) {
+            LitemallGoodsProduct oldProduct = goodsProducts.get(0);
+            LitemallGoodsProduct newProduct = products[0];
+            newProduct.setId(oldProduct.getId());
+            productService.update(newProduct);
+        } else {
+            throw new RuntimeException("更新数据失败");
         }
+
         qCodeService.createGoodShareImage(goods.getId().toString(), goods.getPicUrl(), goods.getName());
 
         return ResponseUtil.ok();
@@ -308,7 +326,7 @@ public class AdminGoodsService {
     }
 
     public Object detail(Integer id) {
-        LitemallGoods goods = goodsService.findById(id);
+        LitemallGoods goods = goodsService.findByIdIncludeOffSale(id);
         List<LitemallGoodsProduct> products = productService.queryByGid(id);
         List<LitemallGoodsSpecification> specifications = specificationService.queryByGid(id);
         List<LitemallGoodsAttribute> attributes = attributeService.queryByGid(id);

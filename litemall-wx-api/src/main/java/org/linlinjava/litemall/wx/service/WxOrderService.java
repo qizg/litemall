@@ -103,6 +103,10 @@ public class WxOrderService {
     private LitemallCouponUserService couponUserService;
     @Autowired
     private CouponVerifyService couponVerifyService;
+    @Autowired
+    private LitemallFlashSalesRulesService flashSalesRulesService;
+    @Autowired
+    private LitemallFlashSalesService flashSalesService;
 
     private String detailedAddress(LitemallAddress litemallAddress) {
         Integer provinceId = litemallAddress.getProvinceId();
@@ -414,7 +418,7 @@ public class WxOrderService {
                     throw new RuntimeException("下单的商品货品数量大于抢购促销库存量");
                 }
                 if (flashSalesRulesService.reduceStock(flashSalesRule.getId(), checkGoods.getNumber()) == 0) {
-                    throw new Exception("促销商品货品库存减少失败");
+                    throw new RuntimeException("促销商品货品库存减少失败");
                 }
             }
         }
