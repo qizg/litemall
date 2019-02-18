@@ -159,6 +159,18 @@ public class LitemallGoodsService {
     }
 
     /**
+     * 获取某个商品信息,包含完整信息
+     *
+     * @param id
+     * @return
+     */
+    public LitemallGoods findByIdIncludeOffSale(Integer id) {
+        LitemallGoodsExample example = new LitemallGoodsExample();
+        example.or().andIdEqualTo(id).andDeletedEqualTo(false);
+        return goodsMapper.selectOneByExampleWithBLOBs(example);
+    }
+
+    /**
      * 获取某个商品信息，仅展示相关内容
      *
      * @param id
