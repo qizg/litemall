@@ -395,7 +395,7 @@ public class AdminGoodsController {
     @RequiresPermissionsDesc(menu={"商品管理" , "商品列表"}, button="编辑")
     @GetMapping("/detail")
     public Object detail(@NotNull Integer id) {
-        LitemallGoods goods = goodsService.findById(id);
+        LitemallGoods goods = goodsService.findByIdIncludeOffSale(id);
         List<LitemallGoodsProduct> products = productService.queryByGid(id);
         List<LitemallGoodsSpecification> specifications = specificationService.queryByGid(id);
         List<LitemallGoodsAttribute> attributes = attributeService.queryByGid(id);
