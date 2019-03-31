@@ -17,7 +17,8 @@ Page({
     channel: [],
     coupon: [],
     flashSales: [],
-    timers: []
+    timers: [],
+    goodsCount: 0
   },
 
   onShareAppMessage: function() {
@@ -106,6 +107,13 @@ Page({
       })
       // console.log(that)
     }
+
+
+    util.request(api.GoodsCount).then(function (res) {
+      that.setData({
+        goodsCount: res.data.goodsCount
+      });
+    });
 
   },
   onLoad: function(options) {
