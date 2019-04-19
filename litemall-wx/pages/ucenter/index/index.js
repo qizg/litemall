@@ -209,6 +209,11 @@ Page({
       url: '/pages/about/about'
     });
   },
+  goHelp: function () {
+    wx.navigateTo({
+      url: '/pages/help/help'
+    });
+  },  
   exitLogin: function() {
     wx.showModal({
       title: '',

@@ -193,5 +193,8 @@
         </table>
 -->
 
+        <table tableName="litemall_log">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
     </context>
 </generatorConfiguration>

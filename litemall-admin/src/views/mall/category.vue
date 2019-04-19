@@ -107,7 +107,7 @@
   </div>
 </template>
 
-<style>
+<style scoped>
 .filter-item{
   margin-left: 100px;
 }

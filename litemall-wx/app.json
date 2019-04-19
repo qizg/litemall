@@ -41,7 +41,8 @@
     "pages/coupon/coupon",
     "pages/switchcity/switchcity",
     "pages/webview/web",
-    "pages/ucenter/balance/balance"
+    "pages/ucenter/balance/balance",
+    "pages/help/help"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FFFFFF",
@@ -94,5 +95,6 @@
     "scope.userLocation": {
       "desc": "你的位置信息将用于获取当前城市"
     }
-  }
+  },
+  "sitemapLocation": "sitemap.json"
 }

@@ -415,7 +415,7 @@ public class WxCartController {
             }
 
         } else {
-            checkedAddress = addressService.findById(addressId);
+            checkedAddress = addressService.query(userId, addressId);
             // 如果null, 则报错
             if (checkedAddress == null) {
                 return ResponseUtil.badArgumentValue();
@@ -489,11 +489,14 @@ public class WxCartController {
             couponId = tmpCouponId;
         } else {
             LitemallCoupon coupon = couponVerifyService.checkCoupon(userId, couponId, checkedGoodsPrice);
-            // 用户选择的优惠券有问题
-            if (coupon == null) {
-                return ResponseUtil.badArgumentValue();
+            // 用户选择的优惠券有问题，则选择合适优惠券，否则使用用户选择的优惠券
+            if(coupon == null){
+                couponPrice = tmpCouponPrice;
+                couponId = tmpCouponId;
             }
-            couponPrice = coupon.getDiscount();
+            else {
+                couponPrice = coupon.getDiscount();
+            }
         }
 
         // 根据订单商品总价计算运费，满88则免运费，否则8元；
