@@ -700,7 +700,7 @@ Page({
   onReady: function() {
     // 页面渲染完成
 
-  }
+  },
 
   countdownTime: function () {//时间函数
     let that = this;

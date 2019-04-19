@@ -336,8 +336,8 @@ public class WxGoodsController {
 	public Object newGoods() {
 		Map<String, String> bannerInfo = new HashMap<>();
 		bannerInfo.put("url", "");
-		bannerInfo.put("name", SystemConfig.getNewBannerTitle());
-		bannerInfo.put("imgUrl", SystemConfig.getNewImageUrl());
+//		bannerInfo.put("name", SystemConfig.getNewBannerTitle());
+//		bannerInfo.put("imgUrl", SystemConfig.getNewImageUrl());
 
 		Map<String, Object> data = new HashMap<>();
 		data.put("bannerInfo", bannerInfo);
@@ -353,8 +353,8 @@ public class WxGoodsController {
 	public Object hotGoods() {
 		Map<String, String> bannerInfo = new HashMap<>();
 		bannerInfo.put("url", "");
-		bannerInfo.put("name", SystemConfig.getHotBannerTitle());
-		bannerInfo.put("imgUrl", SystemConfig.getHotImageUrl());
+//		bannerInfo.put("name", SystemConfig.getHotBannerTitle());
+//		bannerInfo.put("imgUrl", SystemConfig.getHotImageUrl());
 		Map<String, Object> data = new HashMap<>();
 		data.put("bannerInfo", bannerInfo);
 		return ResponseUtil.ok(data);
