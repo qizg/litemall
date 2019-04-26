@@ -1,3 +1,5 @@
+import request from '@/utils/request'
+
 // 登录
 export const USER_LOGIN = '/wx/auth/login';
 export const USER_LOGOUT = '';
@@ -16,3 +18,27 @@ export const ADDRESS_DEFAULT = '/address-default';
 
 // 收藏
 export const GOODS_COLLECT_LIST = '/moreGoods';
+
+export function loginByUsername(data) {
+  return request({
+    url: '/wx/auth/login',
+    method: 'post',
+    data
+  })
+}
+
+
+export function logout() {
+  return request({
+    url: '/auth/logout',
+    method: 'post'
+  })
+}
+
+export function getUserInfo(token) {
+  return request({
+    url: '/auth/info',
+    method: 'get',
+    params: { token }
+  })
+}

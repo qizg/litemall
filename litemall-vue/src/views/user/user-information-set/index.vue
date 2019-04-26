@@ -41,8 +41,10 @@
 <script>
 import { Uploader, Picker, Popup, Button } from 'vant';
 import { USER_PROFILE } from '@/api/user';
-import { removeLocalStorage } from 'core/utils/local-storage';
-import { getLocalStorage } from 'core/utils/local-storage';
+import { removeLocalStorage } from '@/utils/local-storage';
+import { getLocalStorage } from '@/utils/local-storage';
+import { authLogout } from '@/api/api';
+
 export default {
   data() {
     return {
@@ -96,9 +98,9 @@ export default {
       // this.mobile = infoData.mobile;
     },
     loginOut() {
+      authLogout();
       removeLocalStorage(
         'Authorization',
-        // 'user_id',
         'avatar',
         // 'background_image',
         'nickName'

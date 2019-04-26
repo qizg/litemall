@@ -35,7 +35,7 @@
 
 <script>
 import { USER_MODIFY_PASSWORD, USER_LOGOUT } from '@/api/user';
-import { removeLocalStorage } from 'core/utils/local-storage';
+import { removeLocalStorage } from '@/utils/local-storage';
 
 import { Field } from 'vant';
 
@@ -58,7 +58,6 @@ export default {
           .then(() => {
             removeLocalStorage(
               'Authorization',
-              'user_id',
               'avatar',
               'background_image',
               'nickName'

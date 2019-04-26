@@ -49,25 +49,25 @@
       </ul>
     </van-popup>
 
-    <!-- <transition name="fade">
+    <transition name="fade">
 			<van-icon
 				name="arrowupcircle"
 				class="backTop"
 				@click.native="backTop"
 				v-show="showArrow"
 			/>
-    </transition>-->
+    </transition>
   </div>
 </template>
 
 <script>
 import { GOODS_SEARCH } from '@/api/goods';
 
-import ItemGroup from '@/vue/components/item-group';
-import ItemCardHori from '@/vue/components/item-card-hori/';
+import ItemGroup from '@/components/item-group';
+import ItemCardHori from '@/components/item-card-hori/';
 import { Search, Tab, Tabs, Popup } from 'vant';
 // import { throttle } from 'lodash';
-import InfinityScroll from '@/vue/components/infinity-scroll';
+import InfinityScroll from '@/components/infinity-scroll';
 
 export default {
   name: 'Item-list',
