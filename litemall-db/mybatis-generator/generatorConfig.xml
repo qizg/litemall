@@ -44,8 +44,8 @@
         <!--数据库连接信息-->
         <jdbcConnection driverClass="org.mariadb.jdbc.Driver"
                         connectionURL="jdbc:mysql://127.0.0.1:3306/litemall?useUnicode=true&amp;characterEncoding=UTF-8&amp;serverTimezone=UTC&amp;verifyServerCertificate=false&amp;useSSL=false"
-                        userId="litemall"
-                        password="litemall123456"/>
+                        userId="root"
+                        password="123456"/>
 
         <javaTypeResolver>
             <property name="useJSR310Types" value="true"/>
@@ -193,8 +193,9 @@
         </table>
 -->
 
-        <table tableName="litemall_log">
+        <table tableName="litemall_recharge">
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="deleted" javaType="java.lang.Boolean"/>
         </table>
     </context>
 </generatorConfiguration>

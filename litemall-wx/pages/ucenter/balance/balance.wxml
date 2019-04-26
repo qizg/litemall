@@ -2,10 +2,22 @@
 
     <view class="balance_content">
         <view class="balance_content_title">余额</view>
-        <text class="price_tag">￥</text><text class="price">{{balance}}</text>
+        <text class="price_tag">￥</text>
+        <text class="price">{{balance}}</text>
     </view>
 
+    <view class="balance_content">
+        <view class="balance_content_title">充值金额</view>
+
+        <radio-group class="radio_container" bindchange="rechargeChange">
+            <label class="radio" wx:for="{{recharges}}" wx:key="recharge">
+                <radio value="{{item.name}}" checked="{{item.checked}}" />
+                {{item.value}}
+            </label>
+        </radio-group>
+
+    </view>
     <view class="recharge_bg">
-        <view class="recharge" bindtap="recharge">立即储值</view>
+        <view class="recharge" bindtap="recharge">立即充值</view>
     </view>
 </view>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.linlinjava.litemall.db.dao.RechargeMapper">
+    <update id="updateWithOptimisticLocker" parameterType="map">
+        update litemall_recharge
+        <set>
+            <if test="recharge.id != null">
+                id = #{recharge.id,jdbcType=INTEGER},
+            </if>
+            <if test="recharge.userId != null">
+                user_id = #{recharge.userId,jdbcType=INTEGER},
+            </if>
+            <if test="recharge.rechargeSn != null">
+                recharge_sn = #{recharge.rechargeSn,jdbcType=VARCHAR},
+            </if>
+            <if test="recharge.rechargeStatus != null">
+                recharge_status = #{recharge.rechargeStatus,jdbcType=SMALLINT},
+            </if>
+            <if test="recharge.rechargePrice != null">
+                recharge_price = #{recharge.rechargePrice,jdbcType=DECIMAL},
+            </if>
+            <if test="recharge.giftPrice != null">
+                gift_price = #{recharge.giftPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="recharge.actualPrice != null">
+                actual_price = #{recharge.actualPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="recharge.payId != null">
+                pay_id = #{recharge.payId,jdbcType=VARCHAR},
+            </if>
+            <if test="recharge.payTime != null">
+                pay_time = #{recharge.payTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="recharge.addTime != null">
+                add_time = #{recharge.addTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="recharge.updateTime != null">
+                update_time = #{recharge.updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="recharge.deleted != null">
+                deleted = #{recharge.deleted,jdbcType=BIT},
+            </if>
+        </set>
+        where id = #{recharge.id,jdbcType=INTEGER} and update_time = #{lastUpdateTime,jdbcType=INTEGER}
+    </update>
+</mapper>
