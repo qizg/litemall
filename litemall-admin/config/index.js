@@ -61,6 +61,7 @@ module.exports = {
      * In most cases please use '/' !!!
      */
     assetsPublicPath: '/console',
+    // assetsPublicPath: './',
 
     /**
      * Source Maps

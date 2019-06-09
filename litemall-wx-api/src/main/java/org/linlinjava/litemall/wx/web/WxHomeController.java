@@ -10,6 +10,7 @@ import org.linlinjava.litemall.db.domain.LitemallGoods;
 import org.linlinjava.litemall.db.service.*;
 import org.linlinjava.litemall.wx.annotation.LoginUser;
 import org.linlinjava.litemall.wx.service.HomeCacheManager;
+import org.linlinjava.litemall.wx.service.WxGrouponRuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,7 +49,7 @@ public class WxHomeController {
     private LitemallCategoryService categoryService;
 
     @Autowired
-    private LitemallGrouponRulesService grouponRulesService;
+    private WxGrouponRuleService grouponService;
 
     @Autowired
     private LitemallCouponService couponService;
@@ -85,8 +86,6 @@ public class WxHomeController {
         }
         ExecutorService executorService = Executors.newFixedThreadPool(10);
 
-        Map<String, Object> data = new HashMap<>();
-
         Callable<List> bannerListCallable = () -> adService.queryIndex();
 
         Callable<List> channelListCallable = () -> categoryService.queryChannel();
@@ -103,12 +102,12 @@ public class WxHomeController {
 
         Callable<List> hotGoodsListCallable = () -> goodsService.queryByHot(0, SystemConfig.getHotLimit());
 
-        Callable<List> brandListCallable = () -> brandService.queryVO(0, SystemConfig.getBrandLimit());
+        Callable<List> brandListCallable = () -> brandService.query(0, SystemConfig.getBrandLimit());
 
         Callable<List> topicListCallable = () -> topicService.queryList(0, SystemConfig.getTopicLimit());
 
         //团购专区
-        Callable<List> grouponListCallable = () -> grouponRulesService.queryList(0, 5);
+        Callable<List> grouponListCallable = () -> grouponService.queryList(0, 5);
 
         Callable<List> floorGoodsListCallable = this::getCategoryList;
 
@@ -132,24 +131,26 @@ public class WxHomeController {
         executorService.submit(grouponListTask);
         executorService.submit(floorGoodsListTask);
 
+        Map<String, Object> entity = new HashMap<>();
         try {
-            data.put("banner", bannerTask.get());
-            data.put("channel", channelTask.get());
-            data.put("couponList", couponListTask.get());
-            data.put("newGoodsList", newGoodsListTask.get());
-            data.put("hotGoodsList", hotGoodsListTask.get());
-            data.put("brandList", brandListTask.get());
-            data.put("topicList", topicListTask.get());
-            data.put("grouponList", grouponListTask.get());
-            data.put("floorGoodsList", floorGoodsListTask.get());
+            entity.put("banner", bannerTask.get());
+            entity.put("channel", channelTask.get());
+            entity.put("couponList", couponListTask.get());
+            entity.put("newGoodsList", newGoodsListTask.get());
+            entity.put("hotGoodsList", hotGoodsListTask.get());
+            entity.put("brandList", brandListTask.get());
+            entity.put("topicList", topicListTask.get());
+            entity.put("grouponList", grouponListTask.get());
+            entity.put("floorGoodsList", floorGoodsListTask.get());
+            //缓存数据
+            HomeCacheManager.loadData(HomeCacheManager.INDEX, entity);
         }
         catch (Exception e) {
             e.printStackTrace();
+        }finally {
+            executorService.shutdown();
         }
-        //缓存数据
-        HomeCacheManager.loadData(HomeCacheManager.INDEX, data);
-        executorService.shutdown();
-        return ResponseUtil.ok(data);
+        return ResponseUtil.ok(entity);
     }
 
     private List<Map> getCategoryList() {

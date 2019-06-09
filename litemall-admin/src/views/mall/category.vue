@@ -187,7 +187,7 @@ export default {
       this.listLoading = true
       listCategory()
         .then(response => {
-          this.list = response.data.data
+          this.list = response.data.data.list
           this.listLoading = false
         })
         .catch(() => {
@@ -197,7 +197,7 @@ export default {
     },
     getCatL1() {
       listCatL1().then(response => {
-        this.catL1 = response.data.data
+        this.catL1 = response.data.data.list
       })
     },
     resetForm() {

@@ -33,7 +33,8 @@
 
   <view class="goods-info">
     <view class="c">
-      <text class="desc" wx:if="{{goods.goodsBrief}}">{{goods.goodsBrief}}</text>
+      <!-- goods.goodsBrief -->
+      <text class="desc" wx:if="{{goods.brief}}">{{goods.brief}}</text>
       <view class="price">
         <view class="counterPrice">原价：￥{{goods.counterPrice}}</view>
         <view class="retailPrice">现价：￥{{flashSales.id?flashSales.flashSalesPrice:checkedSpecPrice}}</view>

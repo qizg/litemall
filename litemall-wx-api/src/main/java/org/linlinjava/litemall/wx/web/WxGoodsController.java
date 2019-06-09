@@ -289,12 +289,42 @@ public class WxGoodsController {
             }
         }
 
-        Map<String, Object> data = new HashMap<>();
-        data.put("goodsList", goodsList);
-        data.put("count", PageInfo.of(goodsList).getTotal());
-        data.put("filterCategoryList", categoryList);
-        return ResponseUtil.ok(data);
+        PageInfo<LitemallGoods> pagedList = PageInfo.of(goodsList);
+
+        Map<String, Object> entity = new HashMap<>();
+        entity.put("list", goodsList);
+        entity.put("total", pagedList.getTotal());
+        entity.put("page", pagedList.getPageNum());
+        entity.put("limit", pagedList.getPageSize());
+        entity.put("pages", pagedList.getPages());
+        entity.put("filterCategoryList", categoryList);
+
+        // 因为这里需要返回额外的filterCategoryList参数，因此不能方便使用ResponseUtil.okList
+        return ResponseUtil.ok(entity);
     }
+
+    /**
+     * 商品详情页面“大家都在看”推荐商品
+     *
+     * @param id, 商品ID
+     * @return 商品详情页面推荐商品
+     */
+    @GetMapping("related")
+    public Object related(@NotNull Integer id) {
+        LitemallGoods goods = goodsService.findById(id);
+        if (goods == null) {
+            return ResponseUtil.badArgumentValue();
+        }
+
+        // 目前的商品推荐算法仅仅是推荐同类目的其他商品
+        int cid = goods.getCategoryId();
+
+        // 查找六个相关商品
+        int related = 6;
+        List<LitemallGoods> goodsList = goodsService.queryByCategory(cid, 0, related);
+        return ResponseUtil.okList(goodsList);
+    }
+
 
     @GetMapping("listCategory")
     public Object listAllByCategoryId(Integer categoryId) {
@@ -363,29 +393,6 @@ public class WxGoodsController {
         return ResponseUtil.ok(data);
     }
 
-    /**
-     * 商品详情页面“大家都在看”推荐商品
-     *
-     * @param id, 商品ID
-     * @return 商品详情页面推荐商品
-     */
-    @GetMapping("related")
-    public Object related(@NotNull Integer id) {
-        LitemallGoods goods = goodsService.findById(id);
-        if (goods == null) {
-            return ResponseUtil.badArgumentValue();
-        }
-
-        // 目前的商品推荐算法仅仅是推荐同类目的其他商品
-        int cid = goods.getCategoryId();
-
-        // 查找六个相关商品
-        int related = 6;
-        List<LitemallGoods> goodsList = goodsService.queryByCategory(cid, 0, related);
-        Map<String, Object> data = new HashMap<>();
-        data.put("goodsList", goodsList);
-        return ResponseUtil.ok(data);
-    }
 
     /**
      * 在售的商品总数
@@ -395,9 +402,7 @@ public class WxGoodsController {
     @GetMapping("count")
     public Object count() {
         Integer goodsCount = goodsService.queryOnSale();
-        Map<String, Object> data = new HashMap<>();
-        data.put("goodsCount", goodsCount);
-        return ResponseUtil.ok(data);
+        return ResponseUtil.ok(goodsCount);
     }
 
 }
