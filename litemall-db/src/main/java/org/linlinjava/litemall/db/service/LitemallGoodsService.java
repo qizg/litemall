@@ -11,6 +11,7 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -258,5 +259,11 @@ public class LitemallGoodsService {
         LitemallGoodsExample example = new LitemallGoodsExample();
         example.or().andNameEqualTo(name).andIsOnSaleEqualTo(true).andDeletedEqualTo(false);
         return goodsMapper.countByExample(example) != 0;
+    }
+
+    public List<LitemallGoods> queryByIds(Integer[] ids) {
+        LitemallGoodsExample example = new LitemallGoodsExample();
+        example.or().andIdIn(Arrays.asList(ids)).andIsOnSaleEqualTo(true).andDeletedEqualTo(false);
+        return goodsMapper.selectByExampleSelective(example, columns);
     }
 }

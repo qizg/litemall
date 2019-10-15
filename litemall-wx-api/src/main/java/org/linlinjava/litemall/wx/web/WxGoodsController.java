@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.qcloud.cos.utils.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.linlinjava.litemall.core.system.SystemConfig;
 import org.linlinjava.litemall.core.util.ResponseUtil;
 import org.linlinjava.litemall.core.validator.Order;
 import org.linlinjava.litemall.core.validator.Sort;
@@ -191,6 +192,8 @@ public class WxGoodsController {
                 flashSalesRule.setFlashSalesPrice(info.getRetailPrice().subtract(flashSalesRule.getDiscount()));
                 data.put("flashSalesRule", flashSalesRule);
             }
+            //SystemConfig.isAutoCreateShareImage()
+            data.put("share", SystemConfig.isAutoCreateShareImage());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -240,7 +243,7 @@ public class WxGoodsController {
      * @param isHot      是否热买，可选
      * @param userId     用户ID
      * @param page       分页页数
-     * @param limit      分页大小
+     * @param limit       分页大小
      * @param sort       排序方式，支持"add_time", "retail_price"或"name"
      * @param order      排序类型，顺序或者降序
      * @return 根据条件搜素的商品详情

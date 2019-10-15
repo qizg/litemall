@@ -6,6 +6,7 @@ var user = require('../../utils/user.js');
 
 Page({
   data: {
+    canShare: false,
     id: 0,
     goods: {},
     groupon: [], //该商品支持的团购规格
@@ -169,7 +170,8 @@ Page({
           shareImage: res.data.shareImage,
           checkedSpecPrice: res.data.info.retailPrice,
           groupon: res.data.groupon,
-          flashSales: res.data.flashSalesRule
+          flashSales: res.data.flashSalesRule,
+          canShare: res.data.share
         });
 
         //如果是通过分享的团购参加团购，则团购项目应该与分享的一致并且不可更改
