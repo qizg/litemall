@@ -67,4 +67,10 @@ public class LitemallGoodsProductService {
         example.or().andGoodsIdEqualTo(gid);
         return litemallGoodsProductMapper.selectOneByExample(example);
     }
+
+    public void updateById(LitemallGoodsProduct product) {
+        product.setUpdateTime(LocalDateTime.now());
+        litemallGoodsProductMapper.updateByPrimaryKeySelective(product);
+
+    }
 }

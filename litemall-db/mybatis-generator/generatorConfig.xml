@@ -150,10 +150,6 @@
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
         </table>
 
-        <table tableName="litemall_user_formid">
-            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
-        </table>
-
         <table tableName="litemall_groupon_rules">
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
         </table>
@@ -196,6 +192,17 @@
         <table tableName="litemall_recharge">
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
             <columnOverride column="deleted" javaType="java.lang.Boolean"/>
+        </table>
+        <table tableName="litemall_notice">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+        <table tableName="litemall_notice_admin">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+        <table tableName="litemall_aftersale">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="pictures" javaType="java.lang.String[]"
+                            typeHandler="org.linlinjava.litemall.db.mybatis.JsonStringArrayTypeHandler"/>
         </table>
     </context>
 </generatorConfiguration>

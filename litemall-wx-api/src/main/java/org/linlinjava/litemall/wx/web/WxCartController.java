@@ -1,6 +1,7 @@
 package org.linlinjava.litemall.wx.web;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.linlinjava.litemall.core.system.SystemConfig;
@@ -14,10 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.linlinjava.litemall.wx.util.WxResponseCode.GOODS_NO_STOCK;
 import static org.linlinjava.litemall.wx.util.WxResponseCode.GOODS_UNSHELVE;
@@ -62,7 +60,22 @@ public class WxCartController {
             return ResponseUtil.unlogin();
         }
 
-        List<LitemallCart> cartList = cartService.queryByUid(userId);
+        List<LitemallCart> list = cartService.queryByUid(userId);
+        List<LitemallCart> cartList = new ArrayList<>();
+        // TODO
+        // 如果系统检查商品已删除或已下架，则系统自动删除。
+        // 更好的效果应该是告知用户商品失效，允许用户点击按钮来清除失效商品。
+        for (LitemallCart cart : list) {
+            LitemallGoods goods = goodsService.findById(cart.getGoodsId());
+            if (goods == null || !goods.getIsOnSale()) {
+                cartService.deleteById(cart.getId());
+                logger.debug("系统自动删除失效购物车商品 goodsId=" + cart.getGoodsId() + " productId=" + cart.getProductId());
+            }
+            else{
+                cartList.add(cart);
+            }
+        }
+
         Integer goodsCount = 0;
         BigDecimal goodsAmount = new BigDecimal(0.00);
         Integer checkedGoodsCount = 0;
@@ -151,7 +164,12 @@ public class WxCartController {
             cart.setId(null);
             cart.setGoodsSn(goods.getGoodsSn());
             cart.setGoodsName((goods.getName()));
-            cart.setPicUrl(goods.getPicUrl());
+            if(StringUtils.isEmpty(product.getUrl())){
+                cart.setPicUrl(goods.getPicUrl());
+            }
+            else{
+                cart.setPicUrl(product.getUrl());
+            }
             cart.setPrice(product.getPrice());
             cart.setSpecifications(product.getSpecifications());
             cart.setUserId(userId);
@@ -220,7 +238,12 @@ public class WxCartController {
             cart.setId(null);
             cart.setGoodsSn(goods.getGoodsSn());
             cart.setGoodsName((goods.getName()));
-            cart.setPicUrl(goods.getPicUrl());
+            if(StringUtils.isEmpty(product.getUrl())){
+                cart.setPicUrl(goods.getPicUrl());
+            }
+            else{
+                cart.setPicUrl(product.getUrl());
+            }
             cart.setPrice(product.getPrice());
             cart.setSpecifications(product.getSpecifications());
             cart.setUserId(userId);
@@ -253,9 +276,6 @@ public class WxCartController {
         if (userId == null) {
             return ResponseUtil.unlogin();
         }
-        if (cart == null) {
-            return ResponseUtil.badArgument();
-        }
         Integer productId = cart.getProductId();
         Integer number = cart.getNumber().intValue();
         Integer goodsId = cart.getGoodsId();
@@ -269,7 +289,7 @@ public class WxCartController {
 
         //判断是否存在该订单
         // 如果不存在，直接返回错误
-        LitemallCart existCart = cartService.findById(id);
+        LitemallCart existCart = cartService.findById(userId, id);
         if (existCart == null) {
             return ResponseUtil.badArgumentValue();
         }
@@ -433,7 +453,7 @@ public class WxCartController {
 
         // 团购优惠
         BigDecimal grouponPrice = new BigDecimal(0.00);
-        LitemallGrouponRules grouponRules = grouponRulesService.queryById(grouponRulesId);
+        LitemallGrouponRules grouponRules = grouponRulesService.findById(grouponRulesId);
         if (grouponRules != null) {
             grouponPrice = grouponRules.getDiscount();
         }
@@ -443,7 +463,7 @@ public class WxCartController {
         if (cartId == null || cartId.equals(0)) {
             checkedGoodsList = cartService.queryByUidAndChecked(userId);
         } else {
-            LitemallCart cart = cartService.findById(cartId);
+            LitemallCart cart = cartService.findById(userId, cartId);
             if (cart == null) {
                 return ResponseUtil.badArgumentValue();
             }
@@ -474,8 +494,7 @@ public class WxCartController {
         int tmpCouponLength = 0;
         List<LitemallCouponUser> couponUserList = couponUserService.queryAll(userId);
         for(LitemallCouponUser couponUser : couponUserList){
-            tmpUserCouponId = couponUser.getId();
-            LitemallCoupon coupon = couponVerifyService.checkCoupon(userId, couponUser.getCouponId(), tmpUserCouponId, checkedGoodsPrice);
+            LitemallCoupon coupon = couponVerifyService.checkCoupon(userId, couponUser.getCouponId(), couponUser.getId(), checkedGoodsPrice);
             if(coupon == null){
                 continue;
             }
@@ -484,6 +503,7 @@ public class WxCartController {
             if (tmpCouponPrice.compareTo(coupon.getDiscount()) == -1) {
                 tmpCouponPrice = coupon.getDiscount();
                 tmpCouponId = coupon.getId();
+                tmpUserCouponId = couponUser.getId();
             }
         }
         // 获取优惠券减免金额，优惠券可用数量

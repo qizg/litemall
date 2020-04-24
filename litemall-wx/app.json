@@ -42,12 +42,15 @@
     "pages/switchcity/switchcity",
     "pages/webview/web",
     "pages/ucenter/balance/balance",
-    "pages/help/help"
+    "pages/help/help",
+    "pages/ucenter/aftersale/aftersale",
+    "pages/ucenter/aftersaleList/aftersaleList",
+    "pages/ucenter/aftersaleDetail/aftersaleDetail"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FFFFFF",
     "navigationBarTitleText": "几个水果",
-    "enablePullDownRefresh": true,
+    "enablePullDownRefresh": false,
     "navigationBarTextStyle": "black",
     "backgroundColor": "#FFFFFF",
     "backgroundTextStyle": "dark"
@@ -95,6 +98,19 @@
     "scope.userLocation": {
       "desc": "你的位置信息将用于获取当前城市"
     }
+  },
+  "usingComponents": {
+    "van-cell": "./lib/vant-weapp/cell/index",
+    "van-cell-group": "./lib/vant-weapp/cell-group/index",
+    "van-picker": "./lib/vant-weapp/picker/index",
+    "van-popup": "./lib/vant-weapp/popup/index",
+    "van-field": "./lib/vant-weapp/field/index",
+    "van-uploader": "./lib/vant-weapp/uploader/index",
+    "van-button": "./lib/vant-weapp/button/index",
+    "van-tag": "./lib/vant-weapp/tag/index",
+    "van-icon": "./lib/vant-weapp/icon/index",
+    "van-checkbox": "./lib/vant-weapp/checkbox/index",
+    "van-steps": "./lib/vant-weapp/steps/index"
   },
   "sitemapLocation": "sitemap.json"
 }
