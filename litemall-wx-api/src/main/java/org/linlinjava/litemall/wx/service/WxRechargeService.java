@@ -19,9 +19,7 @@ import org.linlinjava.litemall.core.util.JacksonUtil;
 import org.linlinjava.litemall.core.util.ResponseUtil;
 import org.linlinjava.litemall.db.domain.LitemallRecharge;
 import org.linlinjava.litemall.db.domain.LitemallUser;
-import org.linlinjava.litemall.db.domain.LitemallUserFormid;
 import org.linlinjava.litemall.db.service.LitemallRechargeService;
-import org.linlinjava.litemall.db.service.LitemallUserFormIdService;
 import org.linlinjava.litemall.db.service.LitemallUserService;
 import org.linlinjava.litemall.db.util.OrderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,8 +49,8 @@ public class WxRechargeService {
     @Autowired
     private WxPayService wxPayService;
 
-    @Autowired
-    private LitemallUserFormIdService formIdService;
+//    @Autowired
+//    private LitemallUserFormIdService formIdService;
 
     @Autowired
     private NotifyService notifyService;
@@ -110,7 +108,7 @@ public class WxRechargeService {
 
             result = wxPayService.createOrder(orderRequest);
 
-            //缓存prepayID用于后续模版通知
+/*            //缓存prepayID用于后续模版通知
             String prepayId = result.getPackageValue();
             prepayId = prepayId.replace("prepay_id=", "");
             LitemallUserFormid userFormid = new LitemallUserFormid();
@@ -119,7 +117,7 @@ public class WxRechargeService {
             userFormid.setIsprepay(true);
             userFormid.setUseamount(3);
             userFormid.setExpireTime(LocalDateTime.now().plusDays(7));
-            formIdService.addUserFormid(userFormid);
+            formIdService.addUserFormid(userFormid);*/
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -204,8 +202,8 @@ public class WxRechargeService {
                 DateTimeUtil.getDateTimeDisplayString(recharge.getAddTime())
         };
 
-        notifyService.notifyWxTemplate(result.getOpenid(), NotifyType.PAY_SUCCEED, parms,
-                "pages/index/index?rechargeId=" + recharge.getId());
+//        notifyService.notifyWxTemplate(result.getOpenid(), NotifyType.PAY_SUCCEED, parms,
+//                "pages/index/index?rechargeId=" + recharge.getId());
 
         return WxPayNotifyResponse.success("处理成功!");
     }
