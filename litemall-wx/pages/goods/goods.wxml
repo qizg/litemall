@@ -41,9 +41,13 @@
       </view>
 
       <view class="flash-sales" wx:if="{{flashSales.id}}">
-        <view class="time-tag">
+        <van-row class="time-tag">
+          <van-col span="8">距结束</van-col>
+          <van-col span="8">{{flashSales.difftime}}</van-col>
+        </van-row>
+        <!-- <view class="time-tag">
           <zan-capsule color="#a78845" leftText="距结束" rightText="{{flashSales.difftime}}"/>
-        </view>
+        </view> -->
         <text class="sales">已售{{flashSales.soldNumber}}件 / 还剩{{flashSales.lastNumber}}件</text>
       </view>
 

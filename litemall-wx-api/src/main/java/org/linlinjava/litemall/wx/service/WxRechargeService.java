@@ -12,7 +12,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.linlinjava.litemall.core.notify.NotifyService;
-import org.linlinjava.litemall.core.notify.NotifyType;
 import org.linlinjava.litemall.core.util.DateTimeUtil;
 import org.linlinjava.litemall.core.util.IpUtil;
 import org.linlinjava.litemall.core.util.JacksonUtil;
@@ -66,10 +65,10 @@ public class WxRechargeService {
         }
 
         // 实付金额
-        BigDecimal actualPrice = new BigDecimal(amount);
+        BigDecimal actualPrice = BigDecimal.valueOf(amount);
 
         // 赠送金额
-        BigDecimal giftPrice = new BigDecimal(0.00);
+        BigDecimal giftPrice = BigDecimal.valueOf(0.00);
 
         // 充值金额
         BigDecimal rechargePrice = actualPrice.add(giftPrice);
@@ -192,6 +191,12 @@ public class WxRechargeService {
         recharge.setPayTime(LocalDateTime.now());
         recharge.setRechargeStatus(OrderUtil.STATUS_PAY);
         if (rechargeService.updateWithOptimisticLocker(recharge) == 0) {
+            return WxPayNotifyResponse.fail("更新数据已失效");
+        }
+
+        // 更新用户账户余额
+        LitemallUser user = userService.findById(recharge.getUserId());
+        if (userService.updateUserBalanceById(user.getId(), recharge.getRechargePrice().add(user.getBalance())) == 0) {
             return WxPayNotifyResponse.fail("更新数据已失效");
         }
 

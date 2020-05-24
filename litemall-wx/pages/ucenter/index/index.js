@@ -38,7 +38,8 @@ Page({
       util.request(api.UserIndex).then(function(res) {
         if (res.errno === 0) {
           that.setData({
-            order: res.data.order
+            order: res.data.order,
+            balance: res.data.balance
           });
         }
       });
@@ -244,5 +245,10 @@ Page({
       }
     })
 
+  },
+  recharge: function (){
+    wx.navigateTo({
+      url: '/pages/ucenter/balance/balance'
+    });
   }
 })

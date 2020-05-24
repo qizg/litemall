@@ -58,10 +58,20 @@
     </view>
     <view class="order-item">
       <view class="l">
+        <text class="name">配送方式</text>
+      </view>
+      <van-radio-group value="{{ deliveryMethod }}" bind:change="onRadioChange" 
+            style="display:flex;flex-flow:row nowarp;justify-content:flex-end;">
+        <van-radio name="1" bind:click="onRadioClick" style="margin-right:20rpx;">快递</van-radio>
+        <van-radio name="2" bind:click="onRadioClick">自提</van-radio>
+      </van-radio-group>  
+    </view>
+    <view class="order-item">
+      <view class="l">
         <text class="name">运费</text>
       </view>
       <view class="r">
-        <text class="txt">￥{{freightPrice}}元</text>
+        <text class="txt">￥{{deliveryMethod==2?'0':freightPrice}}元</text>
       </view>
     </view>
     <view class="order-item no-border">
@@ -94,4 +104,19 @@
     <view class="l">实付：￥{{actualPrice}}</view>
     <view class="r" bindtap="submitOrder">去付款</view>
   </view>
+
+  <van-popup show="{{ showPayType }}" position="bottom"  bind:close="onActionSheetClose">
+    <van-divider contentPosition="center">支付方式</van-divider>
+    <van-radio-group value="{{ payType }}" bind:change="onPayTypeRadioChange" >
+      <van-cell-group>
+        <van-cell title="微信支付" clickable data-name="1" bind:click="onPayTypeRadioClick">
+          <van-radio slot="right-icon" name="1" />
+        </van-cell>
+        <van-cell title="余额支付" clickable data-name="2" bind:click="onPayTypeRadioClick">
+          <van-radio slot="right-icon" name="2" />
+        </van-cell>
+      </van-cell-group>
+    </van-radio-group>
+    <van-button type="primary" block bind:click="onPayBtnClick">支付</van-button>
+  </van-popup>
 </view>

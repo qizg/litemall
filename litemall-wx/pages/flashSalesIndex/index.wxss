@@ -531,7 +531,7 @@
 }
 
 .time-tag {
-  margin-left: -15rpx;
+  margin-left: 0rpx;
   margin-top: 5rpx;
   margin-bottom: 5rpx;
 }

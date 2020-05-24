@@ -20,7 +20,11 @@ Page({
     userCouponId: 0,
     message: '',
     grouponLinkId: 0, //参与的团购
-    grouponRulesId: 0 //团购规则ID
+    grouponRulesId: 0, //团购规则ID
+    deliveryMethod: '1', //配送方式:1:快递,2:自提
+    showPayType: false, //显示支付类型底部弹窗
+    payType: '1', //支付类型:1:微信支付,2:余额支付
+    orderId:0
   },
   onLoad: function(options) {
     // 页面初始化 options为页面跳转所带来的参数
@@ -142,7 +146,8 @@ Page({
       userCouponId: this.data.userCouponId,
       message: this.data.message,
       grouponRulesId: this.data.grouponRulesId,
-      grouponLinkId: this.data.grouponLinkId
+      grouponLinkId: this.data.grouponLinkId,
+      deliveryMethod: this.data.deliveryMethod
     }, 'POST').then(res => {
       if (res.errno === 0) {
 
@@ -153,53 +158,123 @@ Page({
 
         }
 
-        const orderId = res.data.orderId;
-        const grouponLinkId = res.data.grouponLinkId;
-        util.request(api.OrderPrepay, {
-          orderId: orderId
-        }, 'POST').then(function(res) {
-          if (res.errno === 0) {
-            const payParam = res.data;
-            console.log("支付过程开始");
-            wx.requestPayment({
-              'timeStamp': payParam.timeStamp,
-              'nonceStr': payParam.nonceStr,
-              'package': payParam.packageValue,
-              'signType': payParam.signType,
-              'paySign': payParam.paySign,
-              'success': function(res) {
-                console.log("支付过程成功");
-                if (grouponLinkId) {
-                  setTimeout(() => {
-                    wx.redirectTo({
-                      url: '/pages/groupon/grouponDetail/grouponDetail?id=' + grouponLinkId
-                    })
-                  }, 1000);
-                } else {
-                  wx.redirectTo({
-                    url: '/pages/payResult/payResult?status=1&orderId=' + orderId
-                  });
-                }
-              },
-              'fail': function(res) {
-                console.log("支付过程失败");
-                wx.redirectTo({
-                  url: '/pages/payResult/payResult?status=0&orderId=' + orderId
-                });
-              },
-              'complete': function(res) {
-                console.log("支付过程结束")
-              }
-            });
-          } else {
-            wx.redirectTo({
-              url: '/pages/payResult/payResult?status=0&orderId=' + orderId
-            });
-          }
+        this.setData({
+          orderId : res.data.orderId,
+          grouponLinkId : res.data.grouponLinkId,
+          showPayType: true
         });
+
 
       } else {
         util.showErrorToast(res.errmsg);
+      }
+    });
+  },
+
+  onRadioChange(event) {
+    let that = this;
+    let actualPrice = that.data.actualPrice;
+    let freightPrice = that.data.freightPrice;
+    if(event.detail=='2'){
+      actualPrice = actualPrice - freightPrice;
+    } else {
+      actualPrice = actualPrice + freightPrice;
+    }
+
+    this.setData({
+      deliveryMethod: event.detail,
+      actualPrice: actualPrice
+    });
+  },
+
+  onRadioClick(event) {
+    const { name } = event.currentTarget.dataset;
+    this.setData({
+      deliveryMethod: name
+    });
+  },
+
+  onActionSheetClose(event) {
+    this.setData({
+      showPayType: false
+    });
+  },
+
+  onPayTypeRadioChange(event) {
+    this.setData({
+      payType: event.detail
+    });
+  },
+
+  onPayTypeRadioClick(event) {
+    const { name } = event.currentTarget.dataset;
+    this.setData({
+      payType: name
+    });
+  },
+
+  onPayBtnClick(event){
+
+    let that = this;
+
+    if(that.data.payType === '2'){
+
+      util.request(api.OrderBalancePay, {
+        orderId: that.data.orderId
+      }, 'POST').then(function(res) {
+        if (res.errno === 0) {
+          wx.redirectTo({
+            url: '/pages/payResult/payResult?status=1&orderId=' + that.data.orderId
+          });
+        } else{
+          wx.redirectTo({
+            url: '/pages/payResult/payResult?status=0&orderId=' + that.data.orderId+"&msg="+res.errmsg
+          });
+        }
+      });
+      return;
+    }
+
+    util.request(api.OrderPrepay, {
+      orderId: that.data.orderId
+    }, 'POST').then(function(res) {
+      if (res.errno === 0) {
+        const payParam = res.data;
+        console.log("支付过程开始");
+        wx.requestPayment({
+          'timeStamp': payParam.timeStamp,
+          'nonceStr': payParam.nonceStr,
+          'package': payParam.packageValue,
+          'signType': payParam.signType,
+          'paySign': payParam.paySign,
+          'success': function(res) {
+            console.log("支付过程成功");
+            if (that.data.grouponLinkId) {
+              setTimeout(() => {
+                wx.redirectTo({
+                  url: '/pages/groupon/grouponDetail/grouponDetail?id=' + that.data.grouponLinkId
+                })
+              }, 1000);
+            } else {
+              wx.redirectTo({
+                url: '/pages/payResult/payResult?status=1&orderId=' + that.data.orderId
+              });
+            }
+          },
+          'fail': function(res) {
+            console.log("支付过程失败");
+            wx.redirectTo({
+              url: '/pages/payResult/payResult?status=0&orderId=' + that.data.orderId
+            });
+          },
+          'complete': function(res) {
+            console.log("支付过程结束")
+          }
+        });
+      } else {
+        wx.redirectTo({
+          url: '/pages/payResult/payResult?status=0&orderId=' + that.data.orderId
+        });
       }
     });
   }

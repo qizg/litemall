@@ -924,12 +924,13 @@
 }
 
 .goods-info .c .flash-sales .time-tag {
- margin-left:-20rpx;
+ margin-left:0rpx;
   margin-bottom:25rpx;
 }
 
 .goods-info .c .flash-sales .sales {
   font-size:28rpx;
+  margin-top:25rpx;
   color:#999999;
   line-height:40rpx;
 

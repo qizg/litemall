@@ -308,3 +308,11 @@ page {
   color: #fff;
   font-size: 30rpx;
 }
+
+.van-icon {
+  color: #fff;
+}
+
+.van-button__text {
+  color: #fff;
+}

@@ -185,3 +185,14 @@ page {
   display:flex;
   flex-wrap:wrap
 }
+
+.recharge {
+  margin-top: 10rpx;
+  height: 100rpx;
+  width: 100%;
+  line-height: 100rpx;
+  text-align: center;
+  background: #fff;
+  color: #ab956d;
+  font-size: 30rpx;
+}

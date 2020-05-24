@@ -57,3 +57,8 @@ page {
   line-height: 42rpx;
   text-align: center;
 }
+.pay-result .error .tips .errormsg {
+  color: #b4282d;
+  line-height: 42rpx;
+  text-align: center;
+}

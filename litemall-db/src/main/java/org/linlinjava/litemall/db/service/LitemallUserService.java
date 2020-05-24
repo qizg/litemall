@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -42,6 +43,14 @@ public class LitemallUserService {
     }
 
     public int updateById(LitemallUser user) {
+        user.setUpdateTime(LocalDateTime.now());
+        return userMapper.updateByPrimaryKeySelective(user);
+    }
+
+    public int updateUserBalanceById(Integer userId, BigDecimal balance) {
+        LitemallUser user = new LitemallUser();
+        user.setId(userId);
+        user.setBalance(balance);
         user.setUpdateTime(LocalDateTime.now());
         return userMapper.updateByPrimaryKeySelective(user);
     }

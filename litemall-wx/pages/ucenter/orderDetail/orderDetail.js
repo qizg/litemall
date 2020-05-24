@@ -8,7 +8,9 @@ Page({
     orderGoods: [],
     expressInfo: {},
     flag: false,
-    handleOption: {}
+    handleOption: {},
+    showPayType: false, //显示支付类型底部弹窗
+    payType: '1', //支付类型:1:微信支付,2:余额支付
   },
   onLoad: function(options) {
     // 页面初始化 options为页面跳转所带来的参数
@@ -57,7 +59,31 @@ Page({
   },
   // “去付款”按钮点击效果
   payOrder: function() {
+    this.setData({
+      showPayType: true
+    });
+  },
+  
+  onPayBtnClick(event){
     let that = this;
+    if(that.data.payType === '2'){
+
+      util.request(api.OrderBalancePay, {
+        orderId: that.data.orderId
+      }, 'POST').then(function(res) {
+        if (res.errno === 0) {
+          wx.redirectTo({
+            url: '/pages/payResult/payResult?status=1&orderId=' + that.data.orderId
+          });
+        } else{
+          wx.redirectTo({
+            url: '/pages/payResult/payResult?status=0&orderId=' + that.data.orderId+"&msg="+res.errmsg
+          });
+        }
+      });
+      return;
+    }
+
     util.request(api.OrderPrepay, {
       orderId: that.data.orderId
     }, 'POST').then(function(res) {
@@ -84,7 +110,6 @@ Page({
         });
       }
     });
-
   },
   // “取消订单”点击效果
   cancelOrder: function() {
@@ -210,5 +235,23 @@ Page({
   },
   onUnload: function() {
     // 页面关闭
-  }
+  },
+  onActionSheetClose(event) {
+    this.setData({
+      showPayType: false
+    });
+  },
+
+  onPayTypeRadioChange(event) {
+    this.setData({
+      payType: event.detail
+    });
+  },
+
+  onPayTypeRadioClick(event) {
+    const { name } = event.currentTarget.dataset;
+    this.setData({
+      payType: name
+    });
+  },
 })

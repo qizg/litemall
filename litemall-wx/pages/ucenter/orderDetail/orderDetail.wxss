@@ -318,3 +318,11 @@ page {
 .order-express .acceptStation {
   font-size: 26rpx;
 }
+
+.van-icon {
+  color: #fff;
+}
+
+.van-button__text {
+  color: #fff;
+}

@@ -143,7 +143,7 @@ public class WxGoodsController {
         Callable<List> grouponRulesCallable = () -> rulesService.queryByGoodsId(id);
 
         //抢购信息
-        LitemallFlashSalesRulesResponse flashSalesRule = flashSalesRulesService.queryFirstByGoodsId(id);
+        Callable<LitemallFlashSalesRulesResponse> flashSalesRuleCallable = () -> flashSalesRulesService.queryFirstByGoodsId(id);
 
         // 用户收藏
         int userHasCollect = 0;
@@ -168,6 +168,8 @@ public class WxGoodsController {
         FutureTask<Map> commentsCallableTsk = new FutureTask<>(commentsCallable);
         FutureTask<LitemallBrand> brandCallableTask = new FutureTask<>(brandCallable);
         FutureTask<List> grouponRulesCallableTask = new FutureTask<>(grouponRulesCallable);
+        FutureTask<LitemallFlashSalesRulesResponse> flashSalesRulesTask
+                = new FutureTask<>(flashSalesRuleCallable);
 
         executorService.submit(goodsAttributeListTask);
         executorService.submit(objectCallableTask);
@@ -176,6 +178,7 @@ public class WxGoodsController {
         executorService.submit(commentsCallableTsk);
         executorService.submit(brandCallableTask);
         executorService.submit(grouponRulesCallableTask);
+        executorService.submit(flashSalesRulesTask);
 
         Map<String, Object> data = new HashMap<>();
 
@@ -189,6 +192,7 @@ public class WxGoodsController {
             data.put("attribute", goodsAttributeListTask.get());
             data.put("brand", brandCallableTask.get());
             data.put("groupon", grouponRulesCallableTask.get());
+            LitemallFlashSalesRulesResponse flashSalesRule = flashSalesRulesTask.get();
             if (flashSalesRule != null) {
                 flashSalesRule.setFlashSalesPrice(info.getRetailPrice().subtract(flashSalesRule.getDiscount()));
                 data.put("flashSalesRule", flashSalesRule);

@@ -81,9 +81,11 @@
                     <view class="right flashSales">
                         <view class="text">
                             <text class="name">{{item.goods.name}}</text>
-                            <view class="time-tag">
-                                <zan-capsule color="#a78845" leftText="距结束" rightText="{{item.difftime}}"/>
-                            </view>
+                             <van-row class="time-tag">
+                                <van-col span="8">距结束</van-col>
+                                <van-col span="8">{{item.difftime}}</van-col>
+                             </van-row>
+                                <!--<zan-capsule color="#a78845" leftText="距结束" rightText="{{item.difftime}}"/>-->
                             <text class="sales">已售{{item.sold_number}}件 / 还剩{{item.last_number}}件
                             </text>
                             <view class="price">
